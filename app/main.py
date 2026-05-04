@@ -1,20 +1,17 @@
-import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.db import Base, engine
+from app.core.logging_config import configure_logging
+from app.db.session import Base, engine
 from app.errors import register_exception_handlers
 from app.limiter import limiter
 from app.middleware.logging_access import AccessLogMiddleware
 from app.middleware.request_id import RequestIdMiddleware
-from app.routers import health, users
+from app.routers import health, onboarding, users
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s %(levelname)s %(name)s %(message)s",
-)
+configure_logging()
 
 
 @asynccontextmanager
@@ -42,3 +39,4 @@ app.add_middleware(RequestIdMiddleware)
 
 app.include_router(health.router)
 app.include_router(users.router)
+app.include_router(onboarding.router)

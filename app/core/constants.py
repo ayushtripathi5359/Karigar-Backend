@@ -1,0 +1,1 @@
+USER_ROLE_DEFAULT = "user"

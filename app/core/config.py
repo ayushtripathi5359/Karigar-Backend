@@ -1,9 +1,13 @@
+from functools import lru_cache
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+
+    environment: str = Field(default="development", validation_alias="ENV")
 
     database_url: str = Field(
         default="postgresql+asyncpg://postgres:postgres@localhost:5432/karigar",
@@ -13,8 +17,7 @@ class Settings(BaseSettings):
 
     @property
     def stack_api_base(self) -> str:
-        u = self.stack_api_base_url.rstrip("/")
-        return u
+        return self.stack_api_base_url.rstrip("/")
 
     @property
     def stack_jwks_url(self) -> str:
@@ -29,5 +32,6 @@ class Settings(BaseSettings):
         return f"{self.stack_api_base}/api/v1/projects-anonymous-users/{self.stack_project_id}"
 
 
+@lru_cache
 def get_settings() -> Settings:
     return Settings()

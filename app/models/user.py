@@ -5,7 +5,8 @@ from sqlalchemy import DateTime, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.db import Base
+from app.core.constants import USER_ROLE_DEFAULT
+from app.db.session import Base
 
 
 def utcnow() -> datetime:
@@ -19,6 +20,7 @@ class AppUser(Base):
     stack_user_id: Mapped[str] = mapped_column(String(256), unique=True, index=True)
     email: Mapped[str | None] = mapped_column(String(512), nullable=True)
     display_name: Mapped[str | None] = mapped_column(String(256), nullable=True)
+    role: Mapped[str] = mapped_column(String(32), default=USER_ROLE_DEFAULT, index=True)
     onboarding_completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     raw_profile: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
