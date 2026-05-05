@@ -15,6 +15,11 @@ class Settings(BaseSettings):
     stack_project_id: str = Field(default="set-me-in-env")
     stack_api_base_url: str = "https://api.stack-auth.com"
 
+    otp_secret: str = Field(default="change-me-in-production")
+    otp_expiry_seconds: int = Field(default=300)
+    otp_max_attempts: int = Field(default=3)
+    otp_token_ttl_days: int = Field(default=30)
+
     @property
     def stack_api_base(self) -> str:
         return self.stack_api_base_url.rstrip("/")
