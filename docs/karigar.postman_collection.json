@@ -1,0 +1,114 @@
+{
+  "info": {
+    "name": "Karigar API",
+    "_postman_id": "karigar-api-v1",
+    "description": "OTP auth + user profile + onboarding. Chain: 1 Health -> 2 Request OTP -> 3 Verify OTP (stores token) -> 4 User Profile -> 5 Complete Onboarding -> 6 User Profile (after).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://127.0.0.1:8000" },
+    { "key": "phone", "value": "9876543210" },
+    { "key": "code", "value": "123456" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1. Health",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/health", "host": ["{{baseUrl}}"], "path": ["health"] }
+      }
+    },
+    {
+      "name": "2. Request OTP",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/auth/otp/request",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "auth", "otp", "request"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"phone\": \"{{phone}}\"\n}"
+        }
+      }
+    },
+    {
+      "name": "3. Verify OTP (saves token)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const data = pm.response.json();",
+              "if (data.access_token) {",
+              "  pm.collectionVariables.set('token', data.access_token);",
+              "  console.log('saved token');",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/auth/otp/verify",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "auth", "otp", "verify"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"phone\": \"{{phone}}\",\n  \"code\": \"{{code}}\"\n}"
+        },
+        "description": "Set the {{code}} variable to the 6-digit code printed in the backend terminal (the [PIN STUB] line) before sending."
+      }
+    },
+    {
+      "name": "4. Get User Profile",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/user",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "user"]
+        }
+      }
+    },
+    {
+      "name": "5. Complete Onboarding",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/onboarding/complete",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "onboarding", "complete"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"display_name\": \"Test User\"\n}"
+        }
+      }
+    },
+    {
+      "name": "6. Get User Profile (after onboarding)",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/user",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "user"]
+        }
+      }
+    }
+  ]
+}

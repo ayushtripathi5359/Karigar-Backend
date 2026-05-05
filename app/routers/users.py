@@ -10,9 +10,9 @@ from app.schemas.user import MeResponse
 router = APIRouter(prefix="/v1", tags=["users"])
 
 
-@router.get("/me", response_model=MeResponse)
+@router.get("/user", response_model=MeResponse)
 @limiter.limit("60/minute")
-async def me(
+async def user_profile(
     request: Request,
     user: Annotated[AppUser, Depends(current_user)],
 ) -> MeResponse:
