@@ -1,6 +1,4 @@
 import logging
-import random
-import string
 import uuid
 from datetime import datetime, timedelta, timezone
 
@@ -12,6 +10,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import get_settings
 from app.models.otp import OTPRecord
 from app.models.user import AppUser
+from app.services import pin_stub
+from app.services.flow_tracker import logtrack
 
 logger = logging.getLogger(__name__)
 
@@ -20,21 +20,19 @@ def _utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
-def _generate_code() -> str:
-    return "".join(random.choices(string.digits, k=6))
-
-
 async def request_otp(session: AsyncSession, phone: str) -> int:
     settings = get_settings()
-    code = _generate_code()
-    expires_at = _utcnow() + timedelta(seconds=settings.otp_expiry_seconds)
 
+    code = pin_stub.generate_pin()
+    await logtrack(session, phone=phone, event="pin_generated_by_stub")
+
+    expires_at = _utcnow() + timedelta(seconds=settings.otp_expiry_seconds)
     record = OTPRecord(phone=phone, code=code, expires_at=expires_at)
     session.add(record)
     await session.commit()
 
-    logger.info("[OTP STUB] phone=+91%s code=%s", phone, code)
-    print(f"\n{'='*44}\n  [OTP STUB]  +91{phone}  →  {code}\n{'='*44}\n", flush=True)
+    await pin_stub.deliver_pin(phone, code)
+    await logtrack(session, phone=phone, event="pin_delivered_by_stub")
 
     return settings.otp_expiry_seconds
 
@@ -65,6 +63,7 @@ async def verify_otp(session: AsyncSession, phone: str, code: str) -> str:
     if record.code != code:
         record.attempts += 1
         await session.commit()
+        await logtrack(session, phone=phone, event="verifyPIN_incorrect")
         remaining = settings.otp_max_attempts - record.attempts
         raise HTTPException(
             status.HTTP_400_BAD_REQUEST,
@@ -73,6 +72,7 @@ async def verify_otp(session: AsyncSession, phone: str, code: str) -> str:
 
     record.verified = True
     await session.commit()
+    await logtrack(session, phone=phone, event="verifyPIN_success")
 
     user_result = await session.execute(
         select(AppUser).where(AppUser.phone == phone)
