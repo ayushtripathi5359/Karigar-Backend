@@ -4,13 +4,21 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_settings
-from app.core.logging_config import configure_logging
-from app.db.session import Base, engine
-from app.errors import register_exception_handlers
-from app.limiter import limiter
+from app.core.errors import register_exception_handlers
+from app.core.logging import configure_logging
+from app.db.session import engine
 from app.middleware.logging_access import AccessLogMiddleware
 from app.middleware.request_id import RequestIdMiddleware
-from app.routers import health, onboarding, otp, users
+from app.modules.auth.router import router as auth_router
+from app.modules.catalog.router import router as catalog_router
+from app.modules.health.router import router as health_router
+from app.modules.notifications.router import router as notifications_router
+from app.modules.orders.router import router as orders_router
+from app.modules.pricing.router import router as pricing_router
+from app.modules.suppliers.router import router as suppliers_router
+from app.modules.trends.router import router as trends_router
+from app.modules.users.router import router as users_router
+from app.shared.rate_limit import limiter
 
 configure_logging()
 settings = get_settings()
@@ -18,20 +26,19 @@ settings = get_settings()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    # Schema is owned by the SQL files in sql/ + Alembic — NOT by ORM metadata.
+    # Do not call Base.metadata.create_all here.
     yield
     await engine.dispose()
 
 
 app = FastAPI(
     title="Karigar API",
-    version="1.0.0",
+    version="2.0.0",
     description=(
-        "Backend API for Karigar — a jewellery intelligence platform. "
-        "Supports OTP-based phone authentication and Stack Auth (OAuth)."
+        "Karigar — diamond intelligence platform. v2 schema with RLS-enforced "
+        "data isolation and pgcrypto-encrypted PII. Auth: phone OTP."
     ),
-    contact={"name": "Karigar Engineering"},
     lifespan=lifespan,
 )
 app.state.limiter = limiter
@@ -40,7 +47,7 @@ register_exception_handlers(app)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -48,7 +55,13 @@ app.add_middleware(
 app.add_middleware(AccessLogMiddleware)
 app.add_middleware(RequestIdMiddleware)
 
-app.include_router(health.router)
-app.include_router(otp.router)
-app.include_router(users.router)
-app.include_router(onboarding.router)
+# Module routers — registration order doesn't matter; URL prefixes are unique.
+app.include_router(health_router)
+app.include_router(auth_router)
+app.include_router(users_router)
+app.include_router(catalog_router)
+app.include_router(suppliers_router)
+app.include_router(pricing_router)
+app.include_router(orders_router)
+app.include_router(trends_router)
+app.include_router(notifications_router)
