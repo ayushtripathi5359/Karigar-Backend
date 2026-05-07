@@ -14,6 +14,7 @@ from app.modules.catalog.router import router as catalog_router
 from app.modules.health.router import router as health_router
 from app.modules.notifications.router import router as notifications_router
 from app.modules.orders.router import router as orders_router
+from app.modules.payments.router import router as payments_router
 from app.modules.pricing.router import router as pricing_router
 from app.modules.suppliers.router import router as suppliers_router
 from app.modules.trends.router import router as trends_router
@@ -63,5 +64,6 @@ app.include_router(catalog_router)
 app.include_router(suppliers_router)
 app.include_router(pricing_router)
 app.include_router(orders_router)
+app.include_router(payments_router)
 app.include_router(trends_router)
 app.include_router(notifications_router)
