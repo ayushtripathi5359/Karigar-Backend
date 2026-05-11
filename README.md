@@ -16,6 +16,7 @@ app/
     ├── users/         users + addresses (PII encrypted)
     ├── catalog/       supplier_master + stone_media + search
     ├── suppliers/     supplier_uploads + scrape_jobs + ingest
+    ├── calculator/    jewellery quote calculator (diamond + gold + making + GST)
     ├── pricing/       rapaport + value_scores + price_history
     ├── orders/        orders + items + tracking + inventory_log
     ├── trends/        user_flow_tracking (stone interactions) + trend_signals
@@ -24,13 +25,15 @@ app/
 sql/                   v2 schema (canonical state)
 ├── 01_karigar_schema_v2.sql       — base (23 tables, 19 ENUMs, RLS, pgcrypto)
 ├── 01a_karigar_otp_addendum.sql   — phone_hash, nullable email, otp_records, auth_events
+├── 02_calculator_tables.sql       — diamond_inventory, metal_rates, pricing_settings
 └── 03_verify_v2.sql               — self-test
 
 alembic/               migrations on top of the SQL baseline
 tests/                 pytest (asyncio mode=auto)
 ```
 
-Active modules: `auth`, `users`, `health`. The other six (`catalog`, `suppliers`, `pricing`, `orders`, `trends`, `notifications`) ship with full ORM mappings to v2 tables and 501-stubbed routers — flesh out per-feature.
+Active modules: `auth`, `users`, `health`, `calculator`, `catalog`, `orders`, and
+`payments`. The remaining domain routers are scaffolded for incremental build-out.
 
 ## Run
 
@@ -42,6 +45,8 @@ PGPASSWORD=postgres psql -h localhost -U postgres -d karigar_app -v ON_ERROR_STO
   -f sql/01_karigar_schema_v2.sql
 PGPASSWORD=postgres psql -h localhost -U postgres -d karigar_app -v ON_ERROR_STOP=1 \
   -f sql/01a_karigar_otp_addendum.sql
+PGPASSWORD=postgres psql -h localhost -U postgres -d karigar_app -v ON_ERROR_STOP=1 \
+  -f sql/02_calculator_tables.sql
 
 # 2. Verify (every probe should print "PASS …")
 PGPASSWORD=postgres psql -h localhost -U postgres -d karigar_app -f sql/03_verify_v2.sql
@@ -51,6 +56,25 @@ PGPASSWORD=postgres psql -h localhost -U postgres -d karigar_app -f sql/03_verif
 
 # 4. Boot the API
 .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+## Data imports
+
+Calculator data comes from the Karigar price chart workbook and is stored in
+`diamond_inventory`, `metal_rates`, and `pricing_settings`:
+
+```bash
+.venv/bin/python scripts/seed_inventory.py \
+  --excel "/path/to/Price Chart_Karigar.xlsx"
+```
+
+Supplier inventory comes from the normalized supplier master CSV and is stored in
+`suppliers` plus `supplier_master`. Prefer CSV over PDF because each stone stays
+on one structured row:
+
+```bash
+.venv/bin/python scripts/import_supplier_master_csv.py \
+  --csv "/path/to/schemas_suppliers_master_normalized(Master).csv"
 ```
 
 ## Auth flow

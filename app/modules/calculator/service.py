@@ -54,20 +54,21 @@ async def lookup_diamond_price(
     return DiamondPriceLookupResponse(**row)
 
 
-async def _get_gold_rate(session: AsyncSession, purity_kt: int) -> Decimal:
+async def _get_gold_rate(session: AsyncSession, purity_kt: int, colour: str) -> Decimal:
     result = await session.execute(
         text("""
             SELECT price_per_gram FROM metal_rates
             WHERE metal_type = 'Gold'
               AND purity_kt  = :purity
+              AND colour     = :colour
         """),
-        {"purity": purity_kt},
+        {"purity": purity_kt, "colour": colour},
     )
     row = result.first()
     if not row:
         raise HTTPException(
             status.HTTP_404_NOT_FOUND,
-            f"No gold rate found for {purity_kt}kt",
+            f"No gold rate found for {purity_kt}kt {colour}",
         )
     return Decimal(str(row[0]))
 
@@ -91,7 +92,7 @@ async def calculate_quote(session: AsyncSession, req: QuoteRequest) -> QuoteResp
     )
     diamond_value = Decimal(diamond.karigar_price) * req.total_carat_weight
 
-    gold_rate = await _get_gold_rate(session, req.gold_purity_kt)
+    gold_rate = await _get_gold_rate(session, req.gold_purity_kt, req.gold_colour)
     gold_value = gold_rate * req.gold_weight_grams
 
     cfg = await _get_settings(session)
@@ -106,6 +107,9 @@ async def calculate_quote(session: AsyncSession, req: QuoteRequest) -> QuoteResp
     after_markup = subtotal + markup_amount
     gst_amount = after_markup * gst_pct
     final_price = after_markup + gst_amount
+    discount_pct = req.discount_pct / Decimal("100")
+    discount_amount = final_price * discount_pct
+    final_after_discount = final_price - discount_amount
 
     return QuoteResponse(
         diamond_price_per_carat=diamond.karigar_price,
@@ -118,6 +122,8 @@ async def calculate_quote(session: AsyncSession, req: QuoteRequest) -> QuoteResp
         after_markup=after_markup.quantize(_TWO),
         gst_amount=gst_amount.quantize(_TWO),
         final_price=final_price.quantize(_TWO),
+        discount_amount=discount_amount.quantize(_TWO),
+        final_price_after_discount=final_after_discount.quantize(_TWO),
     )
 
 

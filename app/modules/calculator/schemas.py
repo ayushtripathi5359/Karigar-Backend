@@ -37,21 +37,25 @@ class QuoteRequest(BaseModel):
     total_carat_weight:  Decimal = Field(gt=0)
     gold_weight_grams:   Decimal = Field(gt=0)
     gold_purity_kt:      int     = Field(default=18)
+    gold_colour:         str     = Field(default="Yellow")
     making_charges:      Decimal | None = Field(default=None, ge=0)
+    discount_pct:        Decimal        = Field(default=Decimal("0"), ge=0, le=100)
     jewellery_item_type: str | None = None
 
 
 class QuoteResponse(BaseModel):
-    diamond_price_per_carat: int
-    diamond_value:           Decimal
-    gold_rate_per_gram:      Decimal
-    gold_value:              Decimal
-    making_charges:          Decimal
-    subtotal:                Decimal
-    markup_amount:           Decimal
-    after_markup:            Decimal
-    gst_amount:              Decimal
-    final_price:             Decimal
+    diamond_price_per_carat:    int
+    diamond_value:              Decimal
+    gold_rate_per_gram:         Decimal
+    gold_value:                 Decimal
+    making_charges:             Decimal
+    subtotal:                   Decimal
+    markup_amount:              Decimal
+    after_markup:               Decimal
+    gst_amount:                 Decimal
+    final_price:                Decimal
+    discount_amount:            Decimal
+    final_price_after_discount: Decimal
 
 
 class DropdownOptionsResponse(BaseModel):
