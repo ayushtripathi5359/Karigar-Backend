@@ -1,9 +1,3 @@
-"""
-Development OTP provider: prints the code to stdout instead of sending an SMS.
-
-Replace with a real provider (Twilio, MSG91) for production. Keep this stub
-under MOCK_SMS=true in dev to avoid burning SMS credits.
-"""
 import logging
 
 logger = logging.getLogger(__name__)

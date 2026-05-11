@@ -1,4 +1,3 @@
-"""Stone detail lookup — joined with primary media + value score."""
 from __future__ import annotations
 
 import uuid
@@ -7,7 +6,6 @@ from typing import Any
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import text
-
 
 _DETAIL_SQL = text(
     """
@@ -21,20 +19,16 @@ _DETAIL_SQL = text(
         vs.total_score AS value_score,
         (
             SELECT json_agg(json_build_object(
-                'media_id', m.media_id,
-                'media_type', m.media_type,
-                'url', m.url,
-                'thumbnail_url', m.thumbnail_url,
-                'is_primary', m.is_primary,
-                'sort_order', m.sort_order
+                'media_id', m.media_id, 'media_type', m.media_type,
+                'url', m.url, 'thumbnail_url', m.thumbnail_url,
+                'is_primary', m.is_primary, 'sort_order', m.sort_order
             ) ORDER BY m.is_primary DESC, m.sort_order ASC)
             FROM stone_media m
             WHERE m.stone_id = sm.id AND m.deleted_at IS NULL
         ) AS media
     FROM supplier_master sm
     JOIN suppliers s ON s.supplier_id = sm.supplier_id
-    LEFT JOIN value_scores vs
-        ON vs.stone_id = sm.id AND vs.formula_version = 'v1.0'
+    LEFT JOIN value_scores vs ON vs.stone_id = sm.id AND vs.formula_version = 'v1.0'
     WHERE sm.id = :id AND sm.deleted_at IS NULL
     """
 )

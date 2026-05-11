@@ -10,6 +10,7 @@ from app.db.session import engine
 from app.middleware.logging_access import AccessLogMiddleware
 from app.middleware.request_id import RequestIdMiddleware
 from app.modules.auth.router import router as auth_router
+from app.modules.calculator.router import router as calculator_router
 from app.modules.catalog.router import router as catalog_router
 from app.modules.health.router import router as health_router
 from app.modules.notifications.router import router as notifications_router
@@ -59,6 +60,7 @@ app.add_middleware(RequestIdMiddleware)
 # Module routers — registration order doesn't matter; URL prefixes are unique.
 app.include_router(health_router)
 app.include_router(auth_router)
+app.include_router(calculator_router)
 app.include_router(users_router)
 app.include_router(catalog_router)
 app.include_router(suppliers_router)

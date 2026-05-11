@@ -1,24 +1,19 @@
 """
-Confirm a payment.
+Confirm a payment. Atomic with the order status flip and inventory_log write.
 
-Atomic with the order status flip and the inventory_log write — all in the
-same transaction so a crash mid-way leaves the DB internally consistent.
-
-Idempotent on (idempotency_key): a replay sees the finalized row and
-returns the same outcome.
+Inlines order transition and tracking SQL directly (shared DB) instead of
+calling the orders service over HTTP.
 """
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
 from typing import Any
 
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import text
 
-from app.modules.orders.services import order_management, tracking as order_tracking
-from app.modules.payments.providers.base import PaymentProvider
+from app.providers.base import PaymentProvider
 
 
 async def confirm(
@@ -30,7 +25,6 @@ async def confirm(
     requested_outcome: str,
     provider: PaymentProvider,
 ) -> dict[str, Any]:
-    # Lock the payment row so concurrent confirms collapse to one outcome.
     payment = (
         await session.execute(
             text(
@@ -49,12 +43,9 @@ async def confirm(
     if payment is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "payment not found")
     if payment["idempotency_key"] != idempotency_key:
-        raise HTTPException(
-            status.HTTP_409_CONFLICT,
-            "idempotency_key does not match the original intent",
-        )
+        raise HTTPException(status.HTTP_409_CONFLICT,
+                            "idempotency_key does not match the original intent")
 
-    # Already finalized — return the recorded outcome (true idempotency).
     if payment["status"] in ("succeeded", "failed", "cancelled"):
         order_status = (
             await session.execute(
@@ -70,73 +61,73 @@ async def confirm(
             "finalized_at": payment["finalized_at"],
         }
 
-    # Call the provider (stub honours requested_outcome; real ones ignore it).
     result = await provider.confirm(
         provider_payment_id=payment["provider_payment_id"],
         requested_outcome=requested_outcome,
     )
 
-    # Flip payment + order in one tx
     finalized = (
         await session.execute(
             text(
                 """
                 UPDATE payments
-                SET status = :s,
-                    error_code = :ec,
-                    error_message = :em,
-                    finalized_at = now()
+                SET status = :s, error_code = :ec, error_message = :em, finalized_at = now()
                 WHERE payment_id = :p
                 RETURNING finalized_at
                 """
             ),
-            {
-                "s": result.status,
-                "ec": result.error_code,
-                "em": result.error_message,
-                "p": str(payment_id),
-            },
+            {"s": result.status, "ec": result.error_code, "em": result.error_message,
+             "p": str(payment_id)},
         )
     ).scalar_one()
 
     new_order_status = "confirmed" if result.status == "succeeded" else "cancelled"
-    await order_management.transition(
-        session,
-        buyer_id=user_id,
-        order_id=payment["order_id"],
-        new_status=new_order_status,
-    )
-    await order_tracking.log_status(
-        session,
-        order_id=payment["order_id"],
-        status=new_order_status,
-        notes=(
-            "payment succeeded — order confirmed"
-            if result.status == "succeeded"
-            else f"payment failed: {result.error_message or 'unknown'}"
+
+    # Inline: order_management.transition()
+    await session.execute(
+        text(
+            """
+            UPDATE orders SET status = CAST(:s AS order_status), updated_by = :b
+            WHERE order_id = :o AND deleted_at IS NULL
+            """
         ),
-        actor_user_id=user_id,
+        {"o": str(payment["order_id"]), "s": new_order_status, "b": str(user_id)},
+    )
+
+    # Inline: order_tracking.log_status()
+    notes = (
+        "payment succeeded — order confirmed"
+        if result.status == "succeeded"
+        else f"payment failed: {result.error_message or 'unknown'}"
+    )
+    await session.execute(
+        text(
+            """
+            INSERT INTO order_tracking (order_id, status, notes, created_by)
+            VALUES (:o, CAST(:s AS order_status), :n, :a)
+            """
+        ),
+        {"o": str(payment["order_id"]), "s": new_order_status, "n": notes, "a": str(user_id)},
     )
 
     if result.status == "succeeded":
-        # Inventory event — only on success per design (cancel skips this).
         stone_id = (
             await session.execute(
-                text(
-                    """
-                    SELECT stone_id FROM order_items
-                    WHERE order_id = :o
-                    LIMIT 1
-                    """
-                ),
+                text("SELECT stone_id FROM order_items WHERE order_id = :o LIMIT 1"),
                 {"o": str(payment["order_id"])},
             )
         ).scalar_one()
-        await order_tracking.record_purchase(
-            session,
-            stone_id=stone_id,
-            user_id=user_id,
-            price_inr=payment["amount_inr"],
+        await session.execute(
+            text(
+                """
+                INSERT INTO inventory_log (
+                    stone_id, event_type, user_id, quantity_change, price_inr
+                ) VALUES (
+                    :s, CAST('purchased' AS inventory_event_type), :u, -1, :p
+                )
+                """
+            ),
+            {"s": str(stone_id), "u": str(user_id), "p": payment["amount_inr"]},
         )
 
     return {
