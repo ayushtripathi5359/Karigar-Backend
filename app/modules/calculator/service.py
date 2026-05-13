@@ -127,31 +127,61 @@ async def calculate_quote(session: AsyncSession, req: QuoteRequest) -> QuoteResp
     )
 
 
-async def get_dropdown_options(session: AsyncSession) -> DropdownOptionsResponse:
-    async def distinct(col: str) -> list[str]:
+async def get_dropdown_options(
+    session: AsyncSession,
+    item_type:      str | None = None,
+    batch:          str | None = None,
+    shape:          str | None = None,
+    karigar_color:  str | None = None,
+    karigar_purity: str | None = None,
+) -> DropdownOptionsResponse:
+    async def distinct(col: str, active: dict[str, str | None]) -> list[str]:
+        """Return distinct non-null values for `col` filtered by whatever keys in `active` are set."""
+        conditions = [f"{col} IS NOT NULL"]
+        params: dict[str, str] = {}
+        for k, v in active.items():
+            if v is not None:
+                conditions.append(f"{k} = :{k}")
+                params[k] = v
+        where = " AND ".join(conditions)
         result = await session.execute(
-            text(
-                f"SELECT DISTINCT {col} FROM diamond_inventory"
-                f" WHERE {col} IS NOT NULL ORDER BY {col}"
-            )
+            text(f"SELECT DISTINCT {col} FROM diamond_inventory WHERE {where} ORDER BY {col}"),
+            params,
         )
         return [str(r[0]) for r in result.all()]
 
     purity_result = await session.execute(
-        text("""
-            SELECT DISTINCT purity_kt FROM metal_rates
-            WHERE metal_type = 'Gold' ORDER BY purity_kt DESC
-        """)
+        text("SELECT DISTINCT purity_kt FROM metal_rates WHERE metal_type = 'Gold' ORDER BY purity_kt DESC")
     )
     gold_purity_options = [r[0] for r in purity_result.all()]
 
     return DropdownOptionsResponse(
-        item_types=await distinct("item_type"),
-        batches=await distinct("batch"),
-        shapes=await distinct("shape"),
-        karigar_colors=await distinct("karigar_color"),
-        karigar_purities=await distinct("karigar_purity"),
-        sieve_sizes=await distinct("sieve_size"),
+        item_types=await distinct("item_type", {}),
+        batches=await distinct("batch", {
+            "item_type": item_type,
+        }),
+        shapes=await distinct("shape", {
+            "item_type": item_type,
+            "batch":     batch,
+        }),
+        karigar_colors=await distinct("karigar_color", {
+            "item_type": item_type,
+            "batch":     batch,
+            "shape":     shape,
+        }),
+        karigar_purities=await distinct("karigar_purity", {
+            "item_type":     item_type,
+            "batch":         batch,
+            "shape":         shape,
+            "karigar_color": karigar_color,
+        }),
+        sieve_sizes=await distinct("sieve_size", {
+            "item_type":      item_type,
+            "batch":          batch,
+            "shape":          shape,
+            "karigar_color":  karigar_color,
+            "karigar_purity": karigar_purity,
+        }),
         gold_purity_options=gold_purity_options,
         jewellery_item_types=_JEWELLERY_ITEM_TYPES,
     )

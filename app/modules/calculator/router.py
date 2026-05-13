@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.deps import get_db_anonymous
@@ -21,9 +21,26 @@ DbDep = Annotated[AsyncSession, Depends(get_db_anonymous)]
 
 
 @router.get("/options", response_model=DropdownOptionsResponse)
-async def dropdown_options(db: DbDep):
-    """Valid dropdown values for item type, shape, colour grade, etc."""
-    return await service.get_dropdown_options(db)
+async def dropdown_options(
+    db:             DbDep,
+    item_type:      str | None = Query(default=None),
+    batch:          str | None = Query(default=None),
+    shape:          str | None = Query(default=None),
+    karigar_color:  str | None = Query(default=None),
+    karigar_purity: str | None = Query(default=None),
+):
+    """
+    Cascading dropdown values. Each field is filtered by the upstream selections
+    so only combinations that exist in diamond_inventory are returned.
+    """
+    return await service.get_dropdown_options(
+        db,
+        item_type=item_type,
+        batch=batch,
+        shape=shape,
+        karigar_color=karigar_color,
+        karigar_purity=karigar_purity,
+    )
 
 
 @router.get("/metal-rates", response_model=list[MetalRateResponse])
