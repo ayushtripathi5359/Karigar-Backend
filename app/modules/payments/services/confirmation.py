@@ -82,7 +82,7 @@ async def confirm(
             text(
                 """
                 UPDATE payments
-                SET status = CAST(:s AS payment_status),
+                SET status = :s,
                     error_code = :ec,
                     error_message = :em,
                     finalized_at = now()

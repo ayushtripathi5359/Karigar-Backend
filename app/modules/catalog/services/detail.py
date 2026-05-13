@@ -45,6 +45,6 @@ async def get_stone(session: AsyncSession, stone_id: uuid.UUID) -> dict[str, Any
     if row is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "stone not found")
     data = dict(row)
-    # Coerce UUIDs to strings for JSON serialization at the schema layer.
     data["id"] = str(data["id"])
+    data["media"] = data.get("media") or []
     return data

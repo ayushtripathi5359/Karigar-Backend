@@ -51,17 +51,17 @@ async def _login(client) -> str:
     Reads the [PIN STUB] line from the captured stdout would couple tests to
     log capture. Instead, monkey-patch the code generator for predictability.
     """
-    from app.core import security as sec_mod
+    from app.modules.auth import service as auth_service
 
     phone = f"9876{secrets.randbelow(1_000_000):06d}"
     fixed_code = "424242"
 
-    original_gen = sec_mod.generate_otp_code
+    original_gen = auth_service.generate_otp_code
 
     def fixed_gen(_length: int = 6) -> str:
         return fixed_code
 
-    sec_mod.generate_otp_code = fixed_gen
+    auth_service.generate_otp_code = fixed_gen
     try:
         await client.post("/v1/auth/otp/request", json={"phone": phone})
         r = await client.post(
@@ -69,7 +69,7 @@ async def _login(client) -> str:
             json={"phone": phone, "code": fixed_code},
         )
     finally:
-        sec_mod.generate_otp_code = original_gen
+        auth_service.generate_otp_code = original_gen
 
     assert r.status_code == 200, r.text
     return r.json()["access_token"]
