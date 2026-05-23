@@ -1,14 +1,28 @@
-version: "3.9"
-
 # All services share one PostgreSQL DB and one .env file.
 # Build context is always the karigar-api/ root so Dockerfiles can COPY shared/.
 
 x-service-defaults: &service-defaults
   env_file: .env
+  environment:
+    DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/karigar_app
   restart: unless-stopped
   depends_on:
     postgres:
       condition: service_healthy
+  healthcheck:
+    test:
+      [
+        "CMD-SHELL",
+        "python -c 'import os, urllib.request; urllib.request.urlopen(\"http://127.0.0.1:%s/health\" % os.environ[\"SERVICE_PORT\"], timeout=3).read()'",
+      ]
+    interval: 10s
+    timeout: 5s
+    retries: 12
+    start_period: 20s
+
+x-service-build: &service-build
+  context: .
+  dockerfile: docker/service.Dockerfile
 
 services:
   # ── Database ────────────────────────────────────────────────────────────────
@@ -20,6 +34,15 @@ services:
       POSTGRES_PASSWORD: postgres
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./sql/01_karigar_schema_v2.sql:/docker-entrypoint-initdb.d/01_karigar_schema_v2.sql:ro
+      - ./sql/01a_karigar_otp_addendum.sql:/docker-entrypoint-initdb.d/02_karigar_otp_addendum.sql:ro
+      - ./sql/01b_payments.sql:/docker-entrypoint-initdb.d/03_payments.sql:ro
+      - ./sql/02_calculator_tables.sql:/docker-entrypoint-initdb.d/04_calculator_tables.sql:ro
+      - ./sql/04_admin_supplier_mappings.sql:/docker-entrypoint-initdb.d/05_admin_supplier_mappings.sql:ro
+      - ./sql/05_safe_decrypt_pii.sql:/docker-entrypoint-initdb.d/06_safe_decrypt_pii.sql:ro
+      - ./sql/06_notifications_demand.sql:/docker-entrypoint-initdb.d/07_notifications_demand.sql:ro
+      - ./sql/seed_dev.sql:/docker-entrypoint-initdb.d/08_seed_dev.sql:ro
+      - ./docker/db/08_stamp_alembic.sql:/docker-entrypoint-initdb.d/09_stamp_alembic.sql:ro
     ports:
       - "5432:5432"
     healthcheck:
@@ -36,98 +59,212 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      - auth
-      - users
-      - catalog
-      - suppliers
-      - orders
-      - payments
-      - pricing
-      - trends
-      - notifications
-      - calculator
+      auth:
+        condition: service_healthy
+      users:
+        condition: service_healthy
+      catalog:
+        condition: service_healthy
+      suppliers:
+        condition: service_healthy
+      admin:
+        condition: service_healthy
+      demand:
+        condition: service_healthy
+      orders:
+        condition: service_healthy
+      payments:
+        condition: service_healthy
+      pricing:
+        condition: service_healthy
+      trends:
+        condition: service_healthy
+      notifications:
+        condition: service_healthy
+      calculator:
+        condition: service_healthy
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
 
   # ── Services ────────────────────────────────────────────────────────────────
   auth:
     <<: *service-defaults
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/karigar_app
+      SERVICE_PORT: "8001"
     build:
-      context: .
-      dockerfile: services/auth/Dockerfile
+      <<: *service-build
+      args:
+        SERVICE_NAME: auth
+        SERVICE_PORT: "8001"
     ports:
       - "8001:8001"
 
   users:
     <<: *service-defaults
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/karigar_app
+      SERVICE_PORT: "8002"
     build:
-      context: .
-      dockerfile: services/users/Dockerfile
+      <<: *service-build
+      args:
+        SERVICE_NAME: users
+        SERVICE_PORT: "8002"
     ports:
       - "8002:8002"
 
   catalog:
     <<: *service-defaults
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/karigar_app
+      SERVICE_PORT: "8003"
     build:
-      context: .
-      dockerfile: services/catalog/Dockerfile
+      <<: *service-build
+      args:
+        SERVICE_NAME: catalog
+        SERVICE_PORT: "8003"
     ports:
       - "8003:8003"
 
   suppliers:
     <<: *service-defaults
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/karigar_app
+      SERVICE_PORT: "8004"
     build:
-      context: .
-      dockerfile: services/suppliers/Dockerfile
+      <<: *service-build
+      args:
+        SERVICE_NAME: suppliers
+        SERVICE_PORT: "8004"
     ports:
       - "8004:8004"
 
+  admin:
+    <<: *service-defaults
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/karigar_app
+      SERVICE_PORT: "8011"
+    build:
+      <<: *service-build
+      args:
+        SERVICE_NAME: admin
+        SERVICE_PORT: "8011"
+    ports:
+      - "8011:8011"
+
+  demand:
+    <<: *service-defaults
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/karigar_app
+      SERVICE_PORT: "8012"
+    build:
+      <<: *service-build
+      args:
+        SERVICE_NAME: demand
+        SERVICE_PORT: "8012"
+    ports:
+      - "8012:8012"
+
   orders:
     <<: *service-defaults
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/karigar_app
+      SERVICE_PORT: "8005"
     build:
-      context: .
-      dockerfile: services/orders/Dockerfile
+      <<: *service-build
+      args:
+        SERVICE_NAME: orders
+        SERVICE_PORT: "8005"
     ports:
       - "8005:8005"
 
   payments:
     <<: *service-defaults
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/karigar_app
+      SERVICE_PORT: "8006"
     build:
-      context: .
-      dockerfile: services/payments/Dockerfile
+      <<: *service-build
+      args:
+        SERVICE_NAME: payments
+        SERVICE_PORT: "8006"
     ports:
       - "8006:8006"
 
   pricing:
     <<: *service-defaults
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/karigar_app
+      SERVICE_PORT: "8007"
     build:
-      context: .
-      dockerfile: services/pricing/Dockerfile
+      <<: *service-build
+      args:
+        SERVICE_NAME: pricing
+        SERVICE_PORT: "8007"
     ports:
       - "8007:8007"
 
   trends:
     <<: *service-defaults
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/karigar_app
+      SERVICE_PORT: "8008"
     build:
-      context: .
-      dockerfile: services/trends/Dockerfile
+      <<: *service-build
+      args:
+        SERVICE_NAME: trends
+        SERVICE_PORT: "8008"
     ports:
       - "8008:8008"
 
   notifications:
     <<: *service-defaults
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/karigar_app
+      SERVICE_PORT: "8009"
     build:
-      context: .
-      dockerfile: services/notifications/Dockerfile
+      <<: *service-build
+      args:
+        SERVICE_NAME: notifications
+        SERVICE_PORT: "8009"
     ports:
       - "8009:8009"
 
   calculator:
     <<: *service-defaults
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/karigar_app
+      SERVICE_PORT: "8010"
     build:
-      context: .
-      dockerfile: services/calculator/Dockerfile
+      <<: *service-build
+      args:
+        SERVICE_NAME: calculator
+        SERVICE_PORT: "8010"
     ports:
       - "8010:8010"
+
+  test:
+    profiles: ["test"]
+    image: python:3.12-slim
+    working_dir: /workspace
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/karigar_app
+      ENV: test
+    volumes:
+      - .:/workspace
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      sh -c "pip install --no-cache-dir -r requirements.txt
+      && python docker/test_seed_dev.py
+      && pytest -q"
 
 volumes:
   pgdata:

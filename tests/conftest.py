@@ -13,6 +13,10 @@ import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 
 from app.main import app
+from app.shared.rate_limit import limiter
+
+
+limiter.enabled = False
 
 
 @pytest_asyncio.fixture

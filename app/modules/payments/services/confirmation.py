@@ -18,6 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import text
 
 from app.modules.orders.services import order_management, tracking as order_tracking
+from app.modules.notifications.service import notify_order_transaction
 from app.modules.payments.providers.base import PaymentProvider
 
 
@@ -138,6 +139,13 @@ async def confirm(
             user_id=user_id,
             price_inr=payment["amount_inr"],
         )
+
+    await notify_order_transaction(
+        session,
+        order_id=payment["order_id"],
+        buyer_id=user_id,
+        order_status=new_order_status,
+    )
 
     return {
         "payment_id": payment_id,

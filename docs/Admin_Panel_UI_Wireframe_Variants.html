@@ -1,0 +1,2452 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Karigar Admin Panel UI Wireframe Variants</title>
+    <style>
+      :root {
+        --ink: #111827;
+        --muted: #64748b;
+        --line: #e2e8f0;
+        --page: #f8fafc;
+        --panel: #ffffff;
+        --soft: #f1f5f9;
+        --graphite: #171716;
+        --graphite-2: #24211f;
+        --ivory: #fbf8f3;
+        --gold: #b08663;
+        --gold-soft: #ead7bd;
+        --wine: #94313a;
+        --emerald: #0f7a63;
+        --blue: #2563eb;
+        --violet: #7c3aed;
+        --radius: 18px;
+        --shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+        --shadow-soft: 0 12px 34px rgba(15, 23, 42, 0.07);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background:
+          radial-gradient(circle at top left, rgba(176, 134, 99, 0.13), transparent 34rem),
+          linear-gradient(180deg, #ffffff, var(--page));
+        color: var(--ink);
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+      }
+
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+
+      .page {
+        width: min(1440px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 34px 0 80px;
+      }
+
+      .hero {
+        display: grid;
+        gap: 18px;
+        margin-bottom: 30px;
+      }
+
+      .hero h1 {
+        max-width: 900px;
+        margin: 0;
+        font-size: clamp(34px, 5vw, 72px);
+        line-height: 0.96;
+        letter-spacing: -0.02em;
+      }
+
+      .hero p {
+        max-width: 900px;
+        margin: 0;
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.55;
+      }
+
+      .choice-bar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding: 12px 0 18px;
+        background: linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(248, 250, 252, 0.8));
+        backdrop-filter: blur(16px);
+      }
+
+      .choice-bar a,
+      .mini-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 38px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 0 14px;
+        background: #fff;
+        color: var(--ink);
+        text-decoration: none;
+        font-weight: 760;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+        transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+      }
+
+      .choice-bar a:hover,
+      .mini-button:hover {
+        border-color: var(--gold);
+        transform: translateY(-2px);
+        box-shadow: 0 16px 30px rgba(15, 23, 42, 0.09);
+      }
+
+      .variant {
+        margin-top: 34px;
+        border: 1px solid rgba(148, 163, 184, 0.28);
+        border-radius: 28px;
+        overflow: hidden;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+
+      .variant-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 22px 24px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.78);
+      }
+
+      .variant-header h2 {
+        margin: 0;
+        font-size: 22px;
+      }
+
+      .variant-header p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .tag-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        border-radius: 999px;
+        padding: 0 10px;
+        background: var(--soft);
+        color: #475569;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .tag.gold {
+        background: #fff5df;
+        color: #835d31;
+      }
+
+      .tag.green {
+        background: #e8f7f1;
+        color: #0f766e;
+      }
+
+      .tag.wine {
+        background: #fff0f2;
+        color: #9f1239;
+      }
+
+      .wireframe {
+        min-height: 620px;
+        background: #f8fafc;
+      }
+
+      .nav-pill,
+      .btn,
+      .input,
+      .select,
+      .status,
+      .icon-box {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .btn {
+        min-height: 42px;
+        border: 0;
+        border-radius: 12px;
+        padding: 0 16px;
+        background: var(--ink);
+        color: #fff;
+        font-weight: 820;
+        box-shadow: 0 12px 24px rgba(15, 23, 42, 0.14);
+      }
+
+      .btn.secondary {
+        border: 1px solid var(--line);
+        background: #fff;
+        color: var(--ink);
+        box-shadow: none;
+      }
+
+      .btn.green {
+        background: var(--emerald);
+      }
+
+      .btn.wine {
+        background: var(--wine);
+      }
+
+      .btn.gold {
+        background: linear-gradient(135deg, var(--gold), #7f5638);
+      }
+
+      .input,
+      .select {
+        min-height: 42px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 0 14px;
+        background: #fff;
+        color: var(--muted);
+        justify-content: flex-start;
+      }
+
+      .status {
+        min-height: 28px;
+        border-radius: 999px;
+        padding: 0 10px;
+        background: #eff6ff;
+        color: #2563eb;
+        font-size: 12px;
+        font-weight: 850;
+      }
+
+      .status.good {
+        background: #dcfce7;
+        color: #166534;
+      }
+
+      .status.warn {
+        background: #fff7ed;
+        color: #c2410c;
+      }
+
+      .status.bad {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+
+      .icon-box {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        background: #eef2ff;
+        color: var(--blue);
+        font-weight: 900;
+      }
+
+      .metric {
+        min-height: 132px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 18px;
+        background: #fff;
+        box-shadow: var(--shadow-soft);
+        transition: transform 180ms ease, box-shadow 180ms ease;
+      }
+
+      .metric:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow);
+      }
+
+      .metric span {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 850;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .metric strong {
+        display: block;
+        margin-top: 10px;
+        font-size: 36px;
+        line-height: 1;
+      }
+
+      .table-card {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: var(--shadow-soft);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 15px 16px;
+        border-bottom: 1px solid #edf2f7;
+        text-align: left;
+        font-size: 14px;
+        white-space: nowrap;
+      }
+
+      th {
+        color: #64748b;
+        font-size: 12px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        background: #fbfdff;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      tr:hover td {
+        background: #f8fafc;
+      }
+
+      .avatar {
+        width: 42px;
+        height: 42px;
+        display: inline-grid;
+        place-items: center;
+        border-radius: 999px;
+        background: #ede9fe;
+        color: #6d28d9;
+        font-weight: 900;
+      }
+
+      .fade-up {
+        animation: fadeUp 560ms ease both;
+      }
+
+      .pulse-line {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .pulse-line::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+        transform: translateX(-100%);
+        animation: sweep 3.2s ease-in-out infinite;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes sweep {
+        0%,
+        45% {
+          transform: translateX(-100%);
+        }
+        75%,
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 1ms !important;
+          animation-iteration-count: 1 !important;
+          scroll-behavior: auto !important;
+          transition-duration: 1ms !important;
+        }
+      }
+
+      /* Variant 01 */
+      .v1 {
+        padding: 0;
+        background: #f7f9fc;
+      }
+
+      .v1-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        min-height: 86px;
+        padding: 0 28px;
+        border-bottom: 1px solid var(--line);
+        background: #fff;
+      }
+
+      .v1-brand,
+      .v1-menu,
+      .v1-user,
+      .v1-breadcrumbs,
+      .v1-filters,
+      .v1-title-row {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+
+      .v1-brand {
+        font-size: 24px;
+        font-weight: 900;
+      }
+
+      .v1-menu .nav-pill {
+        min-height: 44px;
+        padding: 0 14px;
+        border-radius: 12px;
+        color: #475569;
+        font-weight: 800;
+      }
+
+      .v1-menu .active {
+        background: #f1f5f9;
+        color: var(--ink);
+      }
+
+      .v1-body {
+        padding: 28px;
+      }
+
+      .v1-breadcrumbs {
+        margin-bottom: 26px;
+        color: var(--muted);
+        font-weight: 760;
+      }
+
+      .v1-board {
+        padding: 26px;
+        border-radius: 22px;
+        background: #fff;
+        box-shadow: var(--shadow-soft);
+      }
+
+      .v1-title-row {
+        justify-content: space-between;
+        margin-bottom: 22px;
+      }
+
+      .v1-title-row h3 {
+        margin: 0;
+        font-size: 32px;
+      }
+
+      .v1-filters {
+        justify-content: space-between;
+        margin: 22px 0;
+      }
+
+      .v1 .metrics {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(180px, 1fr));
+        gap: 16px;
+        margin-bottom: 22px;
+      }
+
+      /* Variant 02 */
+      .v2 {
+        display: grid;
+        grid-template-columns: 282px minmax(0, 1fr);
+        background: var(--ivory);
+      }
+
+      .v2-side {
+        min-height: 700px;
+        padding: 24px;
+        background:
+          linear-gradient(180deg, rgba(36, 33, 31, 0.96), rgba(17, 17, 16, 0.99)),
+          var(--graphite);
+        color: #fff;
+      }
+
+      .v2-logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 34px;
+      }
+
+      .v2-logo-mark {
+        display: grid;
+        place-items: center;
+        width: 54px;
+        height: 54px;
+        border-radius: 18px;
+        background: #fff8ec;
+        color: var(--gold);
+        font-size: 24px;
+      }
+
+      .v2-side button {
+        width: 100%;
+        justify-content: flex-start;
+        min-height: 54px;
+        margin-bottom: 10px;
+        border: 1px solid transparent;
+        border-radius: 16px;
+        padding: 0 16px;
+        background: transparent;
+        color: #e5e7eb;
+        font-weight: 850;
+      }
+
+      .v2-side button.active {
+        border-color: rgba(215, 189, 138, 0.34);
+        background: linear-gradient(90deg, rgba(215, 189, 138, 0.18), rgba(255, 255, 255, 0.04));
+        color: #fff;
+        box-shadow: inset 4px 0 0 var(--gold);
+      }
+
+      .v2-main {
+        position: relative;
+        padding: 34px;
+      }
+
+      .v2-main::after {
+        content: "";
+        position: absolute;
+        top: 70px;
+        right: 80px;
+        width: 260px;
+        height: 260px;
+        border: 1px solid rgba(176, 134, 99, 0.2);
+        transform: rotate(45deg);
+        opacity: 0.42;
+      }
+
+      .v2-head {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 26px;
+      }
+
+      .v2-head h3 {
+        margin: 6px 0 0;
+        font-family: Georgia, serif;
+        font-size: 52px;
+        line-height: 0.95;
+      }
+
+      .v2-grid {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(170px, 1fr));
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+
+      .v2 .metric {
+        background: rgba(255, 253, 248, 0.82);
+        backdrop-filter: blur(16px);
+      }
+
+      .v2-panel {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 12px;
+        margin-bottom: 18px;
+        padding: 16px;
+        border: 1px solid rgba(176, 134, 99, 0.2);
+        border-radius: 18px;
+        background: rgba(255, 253, 248, 0.78);
+        backdrop-filter: blur(16px);
+      }
+
+      /* Variant 03 */
+      .v3 {
+        padding: 22px;
+        background: #f8fafc;
+      }
+
+      .v3-shell {
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        overflow: hidden;
+        background: #fff;
+      }
+
+      .v3-command {
+        display: grid;
+        grid-template-columns: 1fr auto auto auto;
+        gap: 12px;
+        padding: 16px;
+        border-bottom: 1px solid var(--line);
+        background: #fff;
+      }
+
+      .v3-strip {
+        display: flex;
+        gap: 10px;
+        overflow: auto;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--line);
+        background: #fbfdff;
+      }
+
+      .v3-chip {
+        flex: 0 0 auto;
+        min-height: 34px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 0 12px;
+        background: #fff;
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .v3 .table-card {
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+
+      .v3 th {
+        position: sticky;
+        top: 0;
+      }
+
+      /* Variant 04 */
+      .v4 {
+        padding: 26px;
+        background: linear-gradient(135deg, #f8fafc, #ecfdf5);
+      }
+
+      .v4-header {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+        gap: 18px;
+        margin-bottom: 18px;
+      }
+
+      .v4-hero,
+      .v4-upload,
+      .v4-card {
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        background: #fff;
+        box-shadow: var(--shadow-soft);
+      }
+
+      .v4-hero {
+        padding: 26px;
+      }
+
+      .v4-hero h3 {
+        margin: 0 0 10px;
+        font-size: 34px;
+      }
+
+      .v4-upload {
+        display: grid;
+        gap: 14px;
+        padding: 22px;
+        border-style: dashed;
+        border-color: rgba(15, 122, 99, 0.35);
+      }
+
+      .v4-progress {
+        height: 10px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #dbeafe;
+      }
+
+      .v4-progress span {
+        display: block;
+        width: 68%;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--emerald), #67e8f9);
+      }
+
+      .v4-flow {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(150px, 1fr));
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+
+      .v4-card {
+        padding: 18px;
+      }
+
+      .v4-card strong {
+        display: block;
+        margin-top: 10px;
+        font-size: 24px;
+      }
+
+      /* Variant 05 */
+      .v5 {
+        display: grid;
+        grid-template-columns: 380px minmax(0, 1fr);
+        background: #f8fafc;
+      }
+
+      .v5-list {
+        min-height: 700px;
+        padding: 18px;
+        border-right: 1px solid var(--line);
+        background: #fff;
+      }
+
+      .v5-search {
+        margin-bottom: 14px;
+      }
+
+      .v5-item {
+        display: grid;
+        gap: 8px;
+        margin-bottom: 10px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 14px;
+        background: #fff;
+      }
+
+      .v5-item.active {
+        border-color: rgba(37, 99, 235, 0.38);
+        background: #eff6ff;
+      }
+
+      .v5-detail {
+        padding: 26px;
+      }
+
+      .v5-panel {
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        padding: 24px;
+        background: #fff;
+        box-shadow: var(--shadow-soft);
+      }
+
+      .v5-panel h3 {
+        margin: 0 0 8px;
+        font-size: 34px;
+      }
+
+      .v5-facts {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(140px, 1fr));
+        gap: 12px;
+        margin: 20px 0;
+      }
+
+      .v5-fact {
+        padding: 14px;
+        border-radius: 14px;
+        background: #f8fafc;
+      }
+
+      .v5-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      /* Variant 06 */
+      .v6 {
+        display: grid;
+        place-items: center;
+        min-height: 720px;
+        background: #dff3f4;
+        padding: 24px;
+      }
+
+      .phone {
+        width: min(420px, 100%);
+        min-height: 680px;
+        overflow: hidden;
+        border: 9px solid #111827;
+        border-radius: 42px;
+        background: #fbf8f3;
+        box-shadow: 0 30px 80px rgba(15, 23, 42, 0.22);
+      }
+
+      .phone-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px;
+        background: #fff;
+      }
+
+      .phone-body {
+        padding: 18px;
+      }
+
+      .phone-body h3 {
+        margin: 0 0 16px;
+        font-size: 32px;
+      }
+
+      .mobile-card {
+        margin-bottom: 12px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 16px;
+        background: #fff;
+        box-shadow: var(--shadow-soft);
+      }
+
+      .bottom-nav {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin: 18px;
+        padding: 10px;
+        border-radius: 24px;
+        background: #111827;
+      }
+
+      .bottom-nav span {
+        display: grid;
+        place-items: center;
+        min-height: 44px;
+        border-radius: 16px;
+        color: #cbd5e1;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .bottom-nav .active {
+        background: #fff;
+        color: #111827;
+      }
+
+      /* Variant 07 */
+      .v7 {
+        padding: 28px;
+        background:
+          radial-gradient(circle at right top, rgba(148, 49, 58, 0.12), transparent 24rem),
+          #fffaf5;
+      }
+
+      .v7-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 24px;
+      }
+
+      .v7-head h3 {
+        margin: 6px 0 0;
+        font-family: Georgia, serif;
+        font-size: 48px;
+      }
+
+      .v7-tabs {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+      }
+
+      .v7-tab {
+        min-height: 48px;
+        border: 1px solid rgba(176, 134, 99, 0.22);
+        border-radius: 14px;
+        padding: 0 16px;
+        background: rgba(255, 255, 255, 0.74);
+        font-weight: 860;
+      }
+
+      .v7-tab.active {
+        background: #fff4e6;
+        color: #7f5638;
+      }
+
+      .v7-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 330px;
+        gap: 18px;
+      }
+
+      .v7-row {
+        display: grid;
+        grid-template-columns: 44px 1fr auto;
+        gap: 14px;
+        align-items: center;
+        padding: 16px;
+        border-bottom: 1px solid #f1e5d8;
+      }
+
+      .v7-side {
+        display: grid;
+        gap: 12px;
+      }
+
+      .v7-box {
+        border: 1px solid rgba(176, 134, 99, 0.22);
+        border-radius: 18px;
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.78);
+        box-shadow: var(--shadow-soft);
+      }
+
+      /* Variant 08 */
+      .v8 {
+        padding: 26px;
+        background: #0f172a;
+        color: #e2e8f0;
+      }
+
+      .v8-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 22px;
+      }
+
+      .v8 h3 {
+        margin: 8px 0 0;
+        color: #fff;
+        font-size: 42px;
+      }
+
+      .v8-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 18px;
+      }
+
+      .v8-map,
+      .v8-panel,
+      .v8-metric {
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        border-radius: 22px;
+        background: rgba(15, 23, 42, 0.72);
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+      }
+
+      .v8-map {
+        position: relative;
+        min-height: 390px;
+        overflow: hidden;
+        padding: 24px;
+      }
+
+      .v8-map::before {
+        content: "";
+        position: absolute;
+        inset: 36px;
+        border: 1px solid rgba(125, 211, 252, 0.28);
+        border-radius: 46% 54% 52% 48%;
+        transform: rotate(-12deg);
+      }
+
+      .v8-map::after {
+        content: "";
+        position: absolute;
+        top: 110px;
+        right: 120px;
+        width: 110px;
+        height: 110px;
+        border-radius: 28px;
+        background: linear-gradient(135deg, rgba(215, 189, 138, 0.72), rgba(148, 49, 58, 0.55));
+        transform: rotate(45deg);
+        animation: floaty 4s ease-in-out infinite;
+      }
+
+      .v8-metrics {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(140px, 1fr));
+        gap: 14px;
+      }
+
+      .v8-metric {
+        padding: 18px;
+      }
+
+      .v8-metric span {
+        color: #94a3b8;
+        font-size: 12px;
+        font-weight: 850;
+        text-transform: uppercase;
+      }
+
+      .v8-metric strong {
+        display: block;
+        margin-top: 8px;
+        color: #fff;
+        font-size: 32px;
+      }
+
+      .v8-panel {
+        margin-top: 18px;
+        padding: 18px;
+      }
+
+      /* Variant 09 */
+      .v9 {
+        padding: 24px;
+        background: #f6f8fb;
+      }
+
+      .v9-shell {
+        display: grid;
+        grid-template-columns: 76px minmax(0, 1fr);
+        min-height: 680px;
+        overflow: hidden;
+        border: 1px solid #dbe3ee;
+        border-radius: 28px;
+        background: #fff;
+        box-shadow: var(--shadow);
+      }
+
+      .v9-rail {
+        display: grid;
+        align-content: start;
+        justify-items: center;
+        gap: 14px;
+        padding: 18px 12px;
+        border-right: 1px solid #e5edf7;
+        background: #fbfdff;
+      }
+
+      .v9-rail span {
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        color: #64748b;
+        font-weight: 900;
+      }
+
+      .v9-rail .active {
+        background: #111827;
+        color: #fff;
+      }
+
+      .v9-main {
+        padding: 24px;
+      }
+
+      .v9-top,
+      .v9-actions,
+      .v9-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+
+      .v9-top h3 {
+        margin: 6px 0 0;
+        font-size: 40px;
+      }
+
+      .v9-actions {
+        margin: 22px 0;
+      }
+
+      .v9-bento {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr 0.8fr;
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+
+      .v9-card {
+        min-height: 150px;
+        border: 1px solid #e2e8f0;
+        border-radius: 22px;
+        padding: 18px;
+        background: linear-gradient(145deg, #ffffff, #f8fafc);
+        box-shadow: var(--shadow-soft);
+      }
+
+      .v9-card.feature {
+        min-height: 220px;
+        background:
+          radial-gradient(circle at right top, rgba(37, 99, 235, 0.12), transparent 16rem),
+          #fff;
+      }
+
+      .v9-row {
+        padding: 14px 0;
+        border-bottom: 1px solid #edf2f7;
+      }
+
+      /* Variant 10 */
+      .v10 {
+        padding: 24px;
+        background:
+          linear-gradient(135deg, rgba(15, 122, 99, 0.08), transparent 36rem),
+          #fbf8f3;
+      }
+
+      .v10-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 18px;
+      }
+
+      .v10-top h3 {
+        margin: 6px 0 0;
+        font-size: 42px;
+      }
+
+      .v10-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+
+      .v10-panel {
+        display: grid;
+        gap: 14px;
+        min-height: 560px;
+        border: 1px solid rgba(176, 134, 99, 0.22);
+        border-radius: 24px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.78);
+        box-shadow: var(--shadow-soft);
+        backdrop-filter: blur(18px);
+      }
+
+      .v10-panel.dark {
+        background:
+          linear-gradient(180deg, rgba(36, 33, 31, 0.96), rgba(17, 17, 16, 0.98)),
+          #171716;
+        color: #fff;
+      }
+
+      .v10-panel h4 {
+        margin: 0;
+        font-size: 28px;
+      }
+
+      .v10-task {
+        display: grid;
+        grid-template-columns: 44px 1fr auto;
+        gap: 12px;
+        align-items: center;
+        padding: 14px;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.74);
+      }
+
+      .v10-panel.dark .v10-task {
+        border-color: rgba(215, 189, 138, 0.18);
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      /* Variant 11 */
+      .v11 {
+        padding: 20px;
+        background: #ffffff;
+      }
+
+      .v11-layout {
+        display: grid;
+        grid-template-columns: 260px minmax(0, 1fr);
+        gap: 16px;
+      }
+
+      .v11-filters,
+      .v11-table-wrap {
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: #fff;
+        box-shadow: var(--shadow-soft);
+      }
+
+      .v11-filters {
+        display: grid;
+        align-content: start;
+        gap: 12px;
+        padding: 16px;
+      }
+
+      .v11-filters h3 {
+        margin: 0 0 8px;
+        font-size: 24px;
+      }
+
+      .v11-table-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 16px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .v11-table-wrap {
+        overflow: auto;
+      }
+
+      .v11 table {
+        min-width: 920px;
+      }
+
+      .v11 th:first-child,
+      .v11 td:first-child {
+        position: sticky;
+        left: 0;
+        background: #fff;
+        box-shadow: 1px 0 0 #edf2f7;
+      }
+
+      /* Variant 12 */
+      .v12 {
+        padding: 26px;
+        background: #f8fafc;
+      }
+
+      .v12-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 20px;
+      }
+
+      .v12-top h3 {
+        margin: 4px 0 0;
+        font-size: 42px;
+      }
+
+      .v12-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 360px;
+        gap: 18px;
+      }
+
+      .v12-timeline,
+      .v12-side-card {
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background: #fff;
+        box-shadow: var(--shadow-soft);
+      }
+
+      .v12-timeline {
+        padding: 10px 0;
+      }
+
+      .v12-event {
+        display: grid;
+        grid-template-columns: 28px 1fr auto;
+        gap: 14px;
+        padding: 18px 20px;
+        border-bottom: 1px solid #edf2f7;
+      }
+
+      .v12-dot {
+        width: 14px;
+        height: 14px;
+        margin-top: 4px;
+        border-radius: 999px;
+        background: var(--emerald);
+        box-shadow: 0 0 0 6px rgba(15, 122, 99, 0.12);
+      }
+
+      .v12-side-card {
+        display: grid;
+        gap: 12px;
+        align-content: start;
+        padding: 18px;
+      }
+
+      /* Variant 13 */
+      .v13 {
+        padding: 24px;
+        background:
+          radial-gradient(circle at top right, rgba(124, 58, 237, 0.1), transparent 28rem),
+          #f8fafc;
+      }
+
+      .v13-layout {
+        display: grid;
+        grid-template-columns: 330px minmax(0, 1fr);
+        gap: 18px;
+      }
+
+      .v13-summary,
+      .v13-workspace {
+        border: 1px solid var(--line);
+        border-radius: 26px;
+        background: rgba(255, 255, 255, 0.86);
+        box-shadow: var(--shadow-soft);
+      }
+
+      .v13-summary {
+        display: grid;
+        gap: 14px;
+        align-content: start;
+        padding: 22px;
+      }
+
+      .v13-summary h3 {
+        margin: 0;
+        font-size: 34px;
+      }
+
+      .v13-ring {
+        display: grid;
+        place-items: center;
+        width: 180px;
+        height: 180px;
+        margin: 10px auto;
+        border-radius: 999px;
+        background:
+          radial-gradient(circle at center, #fff 0 56%, transparent 57%),
+          conic-gradient(var(--emerald) 0 72%, #e2e8f0 72% 100%);
+        font-size: 34px;
+        font-weight: 900;
+      }
+
+      .v13-workspace {
+        padding: 18px;
+      }
+
+      .v13-toolbar {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      /* Variant 14 */
+      .v14 {
+        padding: 24px;
+        background: #070b12;
+        color: #e5e7eb;
+      }
+
+      .v14-shell {
+        display: grid;
+        gap: 18px;
+      }
+
+      .v14-command {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 12px;
+        padding: 16px;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 24px;
+        background: rgba(15, 23, 42, 0.82);
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+      }
+
+      .v14-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 16px;
+      }
+
+      .v14-card {
+        min-height: 240px;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 24px;
+        padding: 20px;
+        background:
+          linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.96)),
+          #0f172a;
+      }
+
+      .v14-card h3 {
+        margin: 0 0 10px;
+        color: #fff;
+        font-size: 30px;
+      }
+
+      .v14-orbit {
+        position: relative;
+        min-height: 160px;
+      }
+
+      .v14-orbit::before,
+      .v14-orbit::after {
+        content: "";
+        position: absolute;
+        inset: 28px;
+        border: 1px solid rgba(125, 211, 252, 0.22);
+        border-radius: 50%;
+        transform: rotate(-18deg);
+      }
+
+      .v14-orbit::after {
+        inset: 52px;
+        background: linear-gradient(135deg, rgba(215, 189, 138, 0.55), rgba(15, 122, 99, 0.42));
+        border-radius: 26px;
+        transform: rotate(45deg);
+        animation: floaty 4s ease-in-out infinite;
+      }
+
+      /* Variant 15 */
+      .v15 {
+        padding: 24px;
+        background: #fffaf5;
+      }
+
+      .v15-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 18px;
+      }
+
+      .v15-head h3 {
+        margin: 6px 0 0;
+        font-size: 38px;
+      }
+
+      .v15-board {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(220px, 1fr));
+        gap: 14px;
+      }
+
+      .v15-column {
+        min-height: 520px;
+        border: 1px solid rgba(176, 134, 99, 0.24);
+        border-radius: 22px;
+        padding: 14px;
+        background: rgba(255, 255, 255, 0.72);
+        box-shadow: var(--shadow-soft);
+      }
+
+      .v15-column h4 {
+        margin: 4px 4px 14px;
+      }
+
+      .v15-ticket {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 12px;
+        border: 1px solid #eadfd2;
+        border-radius: 16px;
+        padding: 14px;
+        background: #fff;
+      }
+
+      .v15-ticket:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-soft);
+      }
+
+      /* Variant 16 */
+      .v16 {
+        padding: 28px;
+        background: #ffffff;
+      }
+
+      .v16-top {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 22px;
+      }
+
+      .v16-top h3 {
+        margin: 6px 0 0;
+        font-size: 48px;
+        letter-spacing: -0.03em;
+      }
+
+      .v16-grid {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 18px;
+      }
+
+      .v16-hero-card,
+      .v16-stack-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 30px;
+        background: #fff;
+        box-shadow: 0 20px 70px rgba(17, 24, 39, 0.08);
+      }
+
+      .v16-hero-card {
+        display: grid;
+        align-content: space-between;
+        min-height: 480px;
+        padding: 28px;
+      }
+
+      .v16-hero-card h4 {
+        max-width: 500px;
+        margin: 0;
+        font-size: 42px;
+        line-height: 1;
+      }
+
+      .v16-stack {
+        display: grid;
+        gap: 14px;
+      }
+
+      .v16-stack-card {
+        display: grid;
+        grid-template-columns: 52px 1fr auto;
+        gap: 14px;
+        align-items: center;
+        min-height: 112px;
+        padding: 18px;
+      }
+
+      @keyframes floaty {
+        0%,
+        100% {
+          transform: translateY(0) rotate(45deg);
+        }
+        50% {
+          transform: translateY(-14px) rotate(45deg);
+        }
+      }
+
+      @media (max-width: 900px) {
+        .variant-header,
+        .v1-top,
+        .v1-title-row,
+        .v2-head,
+        .v7-head,
+        .v8-top,
+        .v10-top,
+        .v12-top,
+        .v15-head,
+        .v16-top {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .v2,
+        .v5,
+        .v7-grid,
+        .v8-grid,
+        .v9-shell,
+        .v10-grid,
+        .v11-layout,
+        .v12-grid,
+        .v13-layout,
+        .v14-grid,
+        .v16-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .v9-rail {
+          display: flex;
+          overflow-x: auto;
+          justify-content: flex-start;
+          border-right: 0;
+          border-bottom: 1px solid #e5edf7;
+        }
+
+        .v2-side {
+          min-height: auto;
+        }
+
+        .v2-side nav {
+          display: flex;
+          gap: 10px;
+          overflow-x: auto;
+        }
+
+        .v2-side button {
+          width: auto;
+          flex: 0 0 auto;
+        }
+
+        .v1 .metrics,
+        .v2-grid,
+        .v4-header,
+        .v4-flow,
+        .v9-bento,
+        .v15-board {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .v3-command,
+        .v2-panel,
+        .v13-toolbar,
+        .v14-command {
+          grid-template-columns: 1fr;
+        }
+
+        .table-card {
+          overflow-x: auto;
+        }
+
+        table {
+          min-width: 760px;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .page {
+          width: min(100% - 18px, 1440px);
+          padding-top: 18px;
+        }
+
+        .variant-header,
+        .v1-body,
+        .v2-main,
+        .v4,
+        .v5-detail,
+        .v7,
+        .v8,
+        .v9,
+        .v9-main,
+        .v10,
+        .v12,
+        .v13,
+        .v14,
+        .v15,
+        .v16 {
+          padding: 18px;
+        }
+
+        .v1 .metrics,
+        .v2-grid,
+        .v4-header,
+        .v4-flow,
+        .v5-facts,
+        .v8-metrics,
+        .v9-bento,
+        .v15-board {
+          grid-template-columns: 1fr;
+        }
+
+        .v1-menu,
+        .v1-user,
+        .v1-filters {
+          width: 100%;
+        }
+
+        .input,
+        .select,
+        .btn {
+          width: 100%;
+        }
+
+        .v7-row {
+          grid-template-columns: 44px 1fr;
+        }
+
+        .v7-row .status {
+          grid-column: 2;
+          justify-self: start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <div class="tag-row">
+          <span class="tag gold">Design selection</span>
+          <span class="tag green">Admin + supplier</span>
+          <span class="tag wine">Motion direction</span>
+        </div>
+        <h1>Karigar operations panel wireframe variants</h1>
+        <p>
+          These are sixteen UI directions for the admin and supplier panel. Each one keeps the app operational,
+          clear, and flexible, with clean filters, strong button hierarchy, readable tables, and motion that
+          can later be implemented with Framer Motion plus small CSS micro-interactions.
+        </p>
+      </section>
+
+      <nav class="choice-bar" aria-label="Wireframe variants">
+        <a href="#variant-01">01 CRM clean</a>
+        <a href="#variant-02">02 Luxury shell</a>
+        <a href="#variant-03">03 Data console</a>
+        <a href="#variant-04">04 Supplier workspace</a>
+        <a href="#variant-05">05 Master detail</a>
+        <a href="#variant-06">06 Mobile first</a>
+        <a href="#variant-07">07 Notifications</a>
+        <a href="#variant-08">08 Control tower</a>
+        <a href="#variant-09">09 Bento admin</a>
+        <a href="#variant-10">10 Role split</a>
+        <a href="#variant-11">11 Spreadsheet</a>
+        <a href="#variant-12">12 Timeline</a>
+        <a href="#variant-13">13 Health console</a>
+        <a href="#variant-14">14 Dark command</a>
+        <a href="#variant-15">15 Kanban feed</a>
+        <a href="#variant-16">16 Minimal pro</a>
+      </nav>
+
+      <section class="variant" id="variant-01">
+        <div class="variant-header">
+          <div>
+            <h2>01. Clean CRM Command Bar</h2>
+            <p>Best when you want a familiar CRM-style admin: top navigation, breadcrumbs, metric cards, filters, and dense tables.</p>
+          </div>
+          <div class="tag-row">
+            <span class="tag">Best for admin</span>
+            <span class="tag">Fast learning</span>
+            <span class="tag">Low visual risk</span>
+          </div>
+        </div>
+        <div class="wireframe v1 fade-up">
+          <header class="v1-top">
+            <div class="v1-brand">Karigar Ops</div>
+            <nav class="v1-menu">
+              <span class="nav-pill active">Dashboard</span>
+              <span class="nav-pill">Suppliers</span>
+              <span class="nav-pill">Inventory</span>
+              <span class="nav-pill">Notifications</span>
+              <span class="nav-pill">Admin</span>
+            </nav>
+            <div class="v1-user">
+              <span class="status good">Admin</span>
+              <button class="btn secondary">Sign out</button>
+            </div>
+          </header>
+          <div class="v1-body">
+            <div class="v1-breadcrumbs">Dashboard / Suppliers / Active feed</div>
+            <section class="v1-board">
+              <div class="v1-title-row">
+                <div>
+                  <h3>Supplier feed control</h3>
+                  <p style="margin: 8px 0 0; color: var(--muted)">Track uploads, demand requests, notifications, and mapped users.</p>
+                </div>
+                <button class="btn">New supplier upload</button>
+              </div>
+              <div class="v1-filters">
+                <div class="input" style="min-width: 340px">Search supplier, stone, phone...</div>
+                <div class="select">Status: All</div>
+                <div class="select">Date: Last 7 days</div>
+                <button class="btn secondary">Reset</button>
+              </div>
+              <div class="metrics">
+                <div class="metric pulse-line"><span>Total stones</span><strong>327</strong></div>
+                <div class="metric"><span>Open demands</span><strong>18</strong></div>
+                <div class="metric"><span>Failed rows</span><strong>4</strong></div>
+                <div class="metric"><span>Unread notices</span><strong>29</strong></div>
+              </div>
+              <div class="table-card">
+                <table>
+                  <thead>
+                    <tr><th>Supplier</th><th>Status</th><th>Last upload</th><th>Rows</th><th>Actions</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>Demo Diamonds</td><td><span class="status good">Active</span></td><td>Today 11:20</td><td>84 imported</td><td><button class="mini-button">Review</button></td></tr>
+                    <tr><td>Surat Premium</td><td><span class="status warn">Partial</span></td><td>Today 09:42</td><td>12 failed</td><td><button class="mini-button">Fix rows</button></td></tr>
+                    <tr><td>Mumbai Stones</td><td><span class="status">Queued</span></td><td>Yesterday</td><td>120 pending</td><td><button class="mini-button">Open</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="variant" id="variant-02">
+        <div class="variant-header">
+          <div>
+            <h2>02. Luxury Diamond Operations Shell</h2>
+            <p>Premium Karigar look: dark graphite sidebar, ivory workspace, gold edge highlights, and subtle 3D diamond motion.</p>
+          </div>
+          <div class="tag-row">
+            <span class="tag gold">Luxury</span>
+            <span class="tag">Current app compatible</span>
+            <span class="tag">Framer motion friendly</span>
+          </div>
+        </div>
+        <div class="wireframe v2 fade-up">
+          <aside class="v2-side">
+            <div class="v2-logo">
+              <div class="v2-logo-mark">◇</div>
+              <div><strong>Karigar</strong><br /><span style="color: #cbd5e1">Operations panel</span></div>
+            </div>
+            <nav>
+              <button class="active">Dashboard</button>
+              <button>Supplier uploads</button>
+              <button>User access</button>
+              <button>Mapped inventory</button>
+              <button>Notifications</button>
+              <button>Settings</button>
+            </nav>
+          </aside>
+          <main class="v2-main">
+            <div class="v2-head">
+              <div>
+                <span class="tag gold">Operations console</span>
+                <h3>Inventory intelligence</h3>
+              </div>
+              <div class="tag-row">
+                <span class="tag green">Admin</span>
+                <button class="btn gold">Publish promotion</button>
+              </div>
+            </div>
+            <div class="v2-grid">
+              <div class="metric"><span>Active suppliers</span><strong>6</strong></div>
+              <div class="metric"><span>Available stones</span><strong>327</strong></div>
+              <div class="metric"><span>Demand requests</span><strong>18</strong></div>
+            </div>
+            <div class="v2-panel">
+              <div class="input">Search supplier or stone</div>
+              <div class="select">Upload status</div>
+              <button class="btn wine">Upload CSV</button>
+            </div>
+            <div class="table-card">
+              <table>
+                <thead><tr><th>Status</th><th>Supplier</th><th>Imported</th><th>Failed</th><th>Action</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="status good">Done</span></td><td>Demo</td><td>84</td><td>0</td><td><button class="mini-button">View</button></td></tr>
+                  <tr><td><span class="status warn">Partial</span></td><td>Surat Premium</td><td>92</td><td>7</td><td><button class="mini-button">Repair</button></td></tr>
+                  <tr><td><span class="status">Processing</span></td><td>Mumbai Stones</td><td>0</td><td>0</td><td><button class="mini-button">Track</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </main>
+        </div>
+      </section>
+
+      <section class="variant" id="variant-03">
+        <div class="variant-header">
+          <div>
+            <h2>03. Compact Data Console</h2>
+            <p>Best for heavy CRUD work: sticky command bar, compact filters, dense tables, quick actions, fewer decorative surfaces.</p>
+          </div>
+          <div class="tag-row">
+            <span class="tag">Most professional for ops</span>
+            <span class="tag">Highest density</span>
+            <span class="tag">Best for tables</span>
+          </div>
+        </div>
+        <div class="wireframe v3 fade-up">
+          <div class="v3-shell">
+            <div class="v3-command">
+              <div class="input">Global search: supplier, user, phone, stone</div>
+              <div class="select">Role: All</div>
+              <div class="select">Status: Active</div>
+              <button class="btn">Create</button>
+            </div>
+            <div class="v3-strip">
+              <span class="v3-chip">Users 23</span>
+              <span class="v3-chip">Suppliers 6</span>
+              <span class="v3-chip">Mappings 14</span>
+              <span class="v3-chip">Open demand 18</span>
+              <span class="v3-chip">Failed push 2</span>
+              <span class="v3-chip">Upload errors 4</span>
+            </div>
+            <div class="table-card">
+              <table>
+                <thead><tr><th>User</th><th>Phone</th><th>Role</th><th>Supplier</th><th>Verified</th><th>Actions</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="avatar">AD</span> Admin User</td><td>9876543210</td><td><span class="status good">Admin</span></td><td>All</td><td>Yes</td><td><button class="mini-button">Edit</button></td></tr>
+                  <tr><td><span class="avatar">SP</span> Supplier User</td><td>9917014709</td><td><span class="status">Supplier</span></td><td>Demo</td><td>Yes</td><td><button class="mini-button">Map</button></td></tr>
+                  <tr><td><span class="avatar">BY</span> Buyer User</td><td>6779347343</td><td><span class="status warn">Buyer</span></td><td>-</td><td>No</td><td><button class="mini-button">Review</button></td></tr>
+                  <tr><td><span class="avatar">KS</span> Karigar Staff</td><td>8888888888</td><td><span class="status good">Staff</span></td><td>All</td><td>Yes</td><td><button class="mini-button">Audit</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="variant" id="variant-04">
+        <div class="variant-header">
+          <div>
+            <h2>04. Supplier Workspace</h2>
+            <p>Supplier-friendly layout: upload first, mapped inventory visible, demand/order notifications shown without admin-only clutter.</p>
+          </div>
+          <div class="tag-row">
+            <span class="tag green">Best for supplier</span>
+            <span class="tag">Upload focused</span>
+            <span class="tag">Simple navigation</span>
+          </div>
+        </div>
+        <div class="wireframe v4 fade-up">
+          <div class="v4-header">
+            <section class="v4-hero">
+              <span class="tag green">Supplier workspace</span>
+              <h3>Feed uploads</h3>
+              <p style="color: var(--muted); line-height: 1.5">Upload inventory, review failed rows, track buyer demand, and check mapped stock visibility.</p>
+              <div class="tag-row" style="margin-top: 18px">
+                <button class="btn green">Upload CSV</button>
+                <button class="btn secondary">Download template</button>
+              </div>
+            </section>
+            <section class="v4-upload pulse-line">
+              <strong>Current upload</strong>
+              <span style="color: var(--muted)">Processing 84 of 120 rows</span>
+              <div class="v4-progress"><span></span></div>
+              <button class="btn secondary">View upload detail</button>
+            </section>
+          </div>
+          <div class="v4-flow">
+            <div class="v4-card"><span class="status good">Step 1</span><strong>CSV uploaded</strong></div>
+            <div class="v4-card"><span class="status">Step 2</span><strong>Rows normalized</strong></div>
+            <div class="v4-card"><span class="status warn">Step 3</span><strong>4 rows need review</strong></div>
+            <div class="v4-card"><span class="status good">Step 4</span><strong>Inventory live</strong></div>
+          </div>
+          <div class="table-card">
+            <table>
+              <thead><tr><th>Notification</th><th>Type</th><th>Status</th><th>Action</th></tr></thead>
+              <tbody>
+                <tr><td>Buyer requested 8.5% discount</td><td>Demand</td><td><span class="status warn">Open</span></td><td><button class="mini-button">Respond</button></td></tr>
+                <tr><td>Upload completed with partial rows</td><td>Supplier upload</td><td><span class="status">Review</span></td><td><button class="mini-button">Fix</button></td></tr>
+                <tr><td>New order confirmed</td><td>Transaction</td><td><span class="status good">Done</span></td><td><button class="mini-button">Open</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="variant" id="variant-05">
+        <div class="variant-header">
+          <div>
+            <h2>05. Split Master Detail</h2>
+            <p>Best for demand, notifications, orders, and support workflows where users select a row and act in a detail pane.</p>
+          </div>
+          <div class="tag-row">
+            <span class="tag wine">Best for demand</span>
+            <span class="tag">Clear actions</span>
+            <span class="tag">Less page jumping</span>
+          </div>
+        </div>
+        <div class="wireframe v5 fade-up">
+          <aside class="v5-list">
+            <div class="input v5-search">Search demand or stone</div>
+            <div class="v5-item active">
+              <strong>TST-STONE-ec1a86</strong>
+              <span style="color: var(--muted)">Buyer requested 8.5% discount</span>
+              <span class="status warn">Countered</span>
+            </div>
+            <div class="v5-item">
+              <strong>TST-STONE-5de045</strong>
+              <span style="color: var(--muted)">Supplier waiting for admin</span>
+              <span class="status">Pending</span>
+            </div>
+            <div class="v5-item">
+              <strong>TST-STONE-f349f7</strong>
+              <span style="color: var(--muted)">Accepted by supplier</span>
+              <span class="status good">Accepted</span>
+            </div>
+          </aside>
+          <main class="v5-detail">
+            <section class="v5-panel">
+              <span class="tag wine">Demand request</span>
+              <h3>Review buyer negotiation</h3>
+              <p style="color: var(--muted); line-height: 1.5">Use this format when Accept, Counter, Reject must be obvious and safe. It supports comment history, audit log, and notification previews.</p>
+              <div class="v5-facts">
+                <div class="v5-fact"><span>Supplier</span><br /><strong>Demo Diamonds</strong></div>
+                <div class="v5-fact"><span>Buyer request</span><br /><strong>8.5%</strong></div>
+                <div class="v5-fact"><span>Offered price</span><br /><strong>INR 92,000</strong></div>
+              </div>
+              <div class="input" style="min-height: 86px; align-items: flex-start; padding-top: 12px">Internal note / counter reason...</div>
+              <div class="v5-actions" style="margin-top: 16px">
+                <button class="btn green">Accept</button>
+                <button class="btn">Counter</button>
+                <button class="btn wine">Reject</button>
+                <button class="btn secondary">View audit</button>
+              </div>
+            </section>
+          </main>
+        </div>
+      </section>
+
+      <section class="variant" id="variant-06">
+        <div class="variant-header">
+          <div>
+            <h2>06. Mobile-First Bottom Navigation</h2>
+            <p>Best if supplier users often work from phone. Desktop can still use sidebar, but phone gets a true app-like layout.</p>
+          </div>
+          <div class="tag-row">
+            <span class="tag green">Best mobile</span>
+            <span class="tag">Supplier friendly</span>
+            <span class="tag">Thumb reachable</span>
+          </div>
+        </div>
+        <div class="wireframe v6 fade-up">
+          <div class="phone">
+            <div class="phone-top">
+              <strong>Karigar</strong>
+              <span class="status good">Supplier</span>
+            </div>
+            <div class="phone-body">
+              <h3>Uploads</h3>
+              <div class="mobile-card">
+                <span class="tag green">Ready</span>
+                <h4 style="margin: 10px 0 6px">Upload supplier feed</h4>
+                <p style="margin: 0 0 12px; color: var(--muted)">CSV template, row validation, and live status.</p>
+                <button class="btn green">Upload CSV</button>
+              </div>
+              <div class="mobile-card">
+                <strong>Open demand</strong>
+                <p style="color: var(--muted)">3 requests need a response today.</p>
+                <button class="btn secondary">Review demand</button>
+              </div>
+              <div class="mobile-card">
+                <strong>Mapped inventory</strong>
+                <p style="color: var(--muted)">327 stones active, 4 rows failed.</p>
+              </div>
+            </div>
+            <nav class="bottom-nav">
+              <span class="active">Home</span>
+              <span>Upload</span>
+              <span>Demand</span>
+              <span>Profile</span>
+            </nav>
+          </div>
+        </div>
+      </section>
+
+      <section class="variant" id="variant-07">
+        <div class="variant-header">
+          <div>
+            <h2>07. Notification Command Center</h2>
+            <p>Best for notification + promotion management: inbox, campaigns, demand, and delivery health in one controlled workspace.</p>
+          </div>
+          <div class="tag-row">
+            <span class="tag wine">Best for notifications</span>
+            <span class="tag">Tabbed workflows</span>
+            <span class="tag">Push audit friendly</span>
+          </div>
+        </div>
+        <div class="wireframe v7 fade-up">
+          <div class="v7-head">
+            <div>
+              <span class="tag gold">Admin center</span>
+              <h3>Notifications</h3>
+            </div>
+            <button class="btn wine">Create campaign</button>
+          </div>
+          <nav class="v7-tabs">
+            <span class="v7-tab active">Inbox</span>
+            <span class="v7-tab">Campaigns</span>
+            <span class="v7-tab">Demand</span>
+            <span class="v7-tab">Delivery health</span>
+          </nav>
+          <div class="v7-grid">
+            <section class="table-card">
+              <div class="v7-row"><span class="icon-box">N</span><div><strong>Promotion published</strong><br /><span style="color: var(--muted)">Target: buyers, deep link: catalog</span></div><span class="status good">Sent</span></div>
+              <div class="v7-row"><span class="icon-box">D</span><div><strong>Demand request countered</strong><br /><span style="color: var(--muted)">Supplier response waiting</span></div><span class="status warn">Open</span></div>
+              <div class="v7-row"><span class="icon-box">U</span><div><strong>Supplier upload failed</strong><br /><span style="color: var(--muted)">4 invalid rows</span></div><span class="status bad">Failed</span></div>
+            </section>
+            <aside class="v7-side">
+              <div class="v7-box"><strong>Campaign quick publish</strong><div class="input" style="margin: 12px 0">Title</div><div class="input">Deep link</div><button class="btn wine" style="margin-top: 12px">Publish</button></div>
+              <div class="v7-box"><strong>Push health</strong><p style="color: var(--muted)">2 failed, 12 pending, 184 delivered.</p><button class="btn secondary">Retry failed</button></div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="variant" id="variant-08">
+        <div class="variant-header">
+          <div>
+            <h2>08. Executive Control Tower</h2>
+            <p>High-impact dashboard for owners/admins: large visual center, operational KPIs, action queue, and premium dark style.</p>
+          </div>
+          <div class="tag-row">
+            <span class="tag">Most cinematic</span>
+            <span class="tag gold">3D motion ready</span>
+            <span class="tag">Best for dashboard</span>
+          </div>
+        </div>
+        <div class="wireframe v8 fade-up">
+          <div class="v8-top">
+            <div>
+              <span class="tag gold">Control tower</span>
+              <h3>Karigar live operations</h3>
+            </div>
+            <div class="tag-row">
+              <button class="btn gold">Upload inventory</button>
+              <button class="btn secondary">Open queue</button>
+            </div>
+          </div>
+          <div class="v8-grid">
+            <section class="v8-map">
+              <strong style="position: relative; z-index: 1; color: #fff">Diamond motion canvas area</strong>
+              <p style="position: relative; z-index: 1; max-width: 420px; color: #94a3b8">This is where a lightweight Three.js diamond can move slowly behind operational data.</p>
+            </section>
+            <section>
+              <div class="v8-metrics">
+                <div class="v8-metric"><span>Revenue signals</span><strong>INR 9.8L</strong></div>
+                <div class="v8-metric"><span>Open demand</span><strong>18</strong></div>
+                <div class="v8-metric"><span>Supplier uploads</span><strong>12</strong></div>
+                <div class="v8-metric"><span>Push failures</span><strong>2</strong></div>
+              </div>
+              <div class="v8-panel">
+                <strong style="color: #fff">Action queue</strong>
+                <p style="color: #94a3b8">Accept/counter/reject demand requests, retry push, review failed upload rows.</p>
+                <button class="btn wine">Start review</button>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="variant" id="variant-09">
+        <div class="variant-header">
+          <div>
+            <h2>09. Bento Admin Workspace</h2>
+            <p>Modern SaaS dashboard with a slim icon rail, bento cards, clear actions, and a calm product-admin feel.</p>
+          </div>
+          <div class="tag-row">
+            <span class="tag">Very clean</span>
+            <span class="tag">Flexible</span>
+            <span class="tag green">Good for admin + staff</span>
+          </div>
+        </div>
+        <div class="wireframe v9 fade-up">
+          <div class="v9-shell">
+            <aside class="v9-rail">
+              <span class="active">K</span>
+              <span>Db</span>
+              <span>Up</span>
+              <span>Us</span>
+              <span>No</span>
+              <span>St</span>
+            </aside>
+            <main class="v9-main">
+              <div class="v9-top">
+                <div>
+                  <span class="tag">Operations console</span>
+                  <h3>Admin workspace</h3>
+                </div>
+                <div class="tag-row">
+                  <button class="btn secondary">Export</button>
+                  <button class="btn">Create action</button>
+                </div>
+              </div>
+              <div class="v9-actions">
+                <div class="input" style="min-width: 340px">Search users, suppliers, upload IDs...</div>
+                <div class="select">Module: All</div>
+                <div class="select">Status: Needs action</div>
+                <button class="btn secondary">Reset</button>
+              </div>
+              <section class="v9-bento">
+                <div class="v9-card feature">
+                  <span class="status warn">Priority queue</span>
+                  <h4 style="font-size: 30px; margin: 18px 0 8px">18 demand requests need review</h4>
+                  <p style="color: var(--muted)">Accept, counter, reject, and notify buyer/supplier from one queue.</p>
+                  <button class="btn wine">Open demand</button>
+                </div>
+                <div class="v9-card"><span class="tag green">Supplier health</span><strong style="display:block; margin-top:18px; font-size:38px">94%</strong><p style="color: var(--muted)">Feeds active</p></div>
+                <div class="v9-card"><span class="tag gold">Push delivery</span><strong style="display:block; margin-top:18px; font-size:38px">182</strong><p style="color: var(--muted)">Delivered today</p></div>
+              </section>
+              <section class="table-card">
+                <div class="v9-row"><strong>Demo supplier upload</strong><span class="status good">Done</span><button class="mini-button">View</button></div>
+                <div class="v9-row"><strong>Buyer promotion campaign</strong><span class="status">Draft</span><button class="mini-button">Publish</button></div>
+                <div class="v9-row"><strong>Supplier mapping request</strong><span class="status warn">Review</span><button class="mini-button">Approve</button></div>
+              </section>
+            </main>
+          </div>
+        </div>
+      </section>
+
+      <section class="variant" id="variant-10">
+        <div class="variant-header">
+          <div>
+            <h2>10. Role Split Admin + Supplier</h2>
+            <p>Side-by-side concept showing how the same system adapts: admin gets full control, supplier gets scoped workspace.</p>
+          </div>
+          <div class="tag-row">
+            <span class="tag gold">Role-based</span>
+            <span class="tag">Good architecture fit</span>
+            <span class="tag green">Clear permissions</span>
+          </div>
+        </div>
+        <div class="wireframe v10 fade-up">
+          <div class="v10-top">
+            <div>
+              <span class="tag gold">Adaptive console</span>
+              <h3>One shell, different powers</h3>
+            </div>
+            <button class="btn gold">Switch preview role</button>
+          </div>
+          <div class="v10-grid">
+            <section class="v10-panel dark">
+              <span class="status good">Admin view</span>
+              <h4>Platform control</h4>
+              <p style="color: #cbd5e1">Full supplier, user, demand, notification, promotion, and delivery health access.</p>
+              <div class="v10-task"><span class="icon-box">A</span><div><strong>Resolve demand</strong><br /><span style="color:#cbd5e1">Counter request waiting</span></div><button class="mini-button">Open</button></div>
+              <div class="v10-task"><span class="icon-box">U</span><div><strong>Map supplier user</strong><br /><span style="color:#cbd5e1">Grant manager role</span></div><button class="mini-button">Map</button></div>
+              <div class="v10-task"><span class="icon-box">P</span><div><strong>Publish promotion</strong><br /><span style="color:#cbd5e1">Target buyers</span></div><button class="mini-button">Publish</button></div>
+            </section>
+            <section class="v10-panel">
+              <span class="status">Supplier view</span>
+              <h4>Mapped workspace</h4>
+              <p style="color: var(--muted)">Only supplier uploads, inventory, demand responses, and scoped notifications.</p>
+              <div class="v10-task"><span class="icon-box">CSV</span><div><strong>Upload feed</strong><br /><span style="color:var(--muted)">CSV validation ready</span></div><button class="mini-button">Upload</button></div>
+              <div class="v10-task"><span class="icon-box">D</span><div><strong>Demand response</strong><br /><span style="color:var(--muted)">3 buyer requests</span></div><button class="mini-button">Respond</button></div>
+              <div class="v10-task"><span class="icon-box">I</span><div><strong>Inventory preview</strong><br /><span style="color:var(--muted)">327 active stones</span></div><button class="mini-button">View</button></div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="variant" id="variant-11">
+        <div class="variant-header">
+          <div>
+            <h2>11. Spreadsheet Pro CRUD</h2>
+            <p>Professional admin table for bulk editing, filters, inline actions, sticky columns, and dense row scanning.</p>
+          </div>
+          <div class="tag-row">
+            <span class="tag">Best CRUD</span>
+            <span class="tag">Most scalable</span>
+            <span class="tag">Operations standard</span>
+          </div>
+        </div>
+        <div class="wireframe v11 fade-up">
+          <div class="v11-layout">
+            <aside class="v11-filters">
+              <h3>Filters</h3>
+              <div class="input">Search</div>
+              <div class="select">Role</div>
+              <div class="select">Supplier</div>
+              <div class="select">Verification</div>
+              <div class="select">Created date</div>
+              <button class="btn">Apply filters</button>
+              <button class="btn secondary">Clear</button>
+            </aside>
+            <section class="v11-table-wrap">
+              <div class="v11-table-head">
+                <div><strong>User access table</strong><br /><span style="color: var(--muted)">Edit roles, verify users, map suppliers, soft delete.</span></div>
+                <div class="tag-row"><button class="btn secondary">Columns</button><button class="btn">Add user</button></div>
+              </div>
+              <table>
+                <thead><tr><th>Name</th><th>Phone</th><th>Role</th><th>Supplier</th><th>Verified</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody>
+                  <tr><td>Admin User</td><td>9876543210</td><td>Admin</td><td>All</td><td>Yes</td><td><span class="status good">Active</span></td><td><button class="mini-button">Edit</button></td></tr>
+                  <tr><td>Supplier Manager</td><td>9917014709</td><td>Supplier</td><td>Demo</td><td>Yes</td><td><span class="status good">Active</span></td><td><button class="mini-button">Edit</button></td></tr>
+                  <tr><td>Buyer Test</td><td>6779347343</td><td>Buyer</td><td>-</td><td>No</td><td><span class="status warn">Review</span></td><td><button class="mini-button">Verify</button></td></tr>
+                </tbody>
+              </table>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="variant" id="variant-12">
+        <div class="variant-header">
+          <div>
+            <h2>12. Timeline Operations Feed</h2>
+            <p>Best when admins need to understand what happened end to end: upload, notification, demand, payment, supplier update.</p>
+          </div>
+          <div class="tag-row">
+            <span class="tag wine">Best for audit</span>
+            <span class="tag">Notification friendly</span>
+            <span class="tag">Easy to explain</span>
+          </div>
+        </div>
+        <div class="wireframe v12 fade-up">
+          <div class="v12-top">
+            <div>
+              <span class="tag wine">Live activity</span>
+              <h3>Operations timeline</h3>
+            </div>
+            <div class="tag-row"><button class="btn secondary">Filter</button><button class="btn wine">Create notice</button></div>
+          </div>
+          <div class="v12-grid">
+            <section class="v12-timeline">
+              <div class="v12-event"><span class="v12-dot"></span><div><strong>Demand request countered</strong><br /><span style="color: var(--muted)">Buyer and admin notified. Supplier offered INR 92,000.</span></div><span class="status warn">Open</span></div>
+              <div class="v12-event"><span class="v12-dot"></span><div><strong>Supplier upload completed</strong><br /><span style="color: var(--muted)">84 rows imported, 4 failed. Mapped users notified.</span></div><span class="status good">Done</span></div>
+              <div class="v12-event"><span class="v12-dot"></span><div><strong>Promotion campaign published</strong><br /><span style="color: var(--muted)">Target: buyers. Outbox queued 182 pushes.</span></div><span class="status">Queued</span></div>
+              <div class="v12-event"><span class="v12-dot"></span><div><strong>Payment confirmed</strong><br /><span style="color: var(--muted)">Buyer, supplier, and admins received transaction notice.</span></div><span class="status good">Paid</span></div>
+            </section>
+            <aside class="v12-side-card">
+              <strong>Event filters</strong>
+              <div class="select">Type: All</div>
+              <div class="select">Actor: All roles</div>
+              <div class="select">Date: Today</div>
+              <div class="input">Search metadata</div>
+              <button class="btn">Apply</button>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="variant" id="variant-13">
+        <div class="variant-header">
+          <div>
+            <h2>13. Supplier Health Console</h2>
+            <p>Dashboard focused on supplier quality, upload health, failed rows, demand SLA, and mapped inventory status.</p>
+          </div>
+          <div class="tag-row">
+            <span class="tag green">Best supplier operations</span>
+            <span class="tag">Health score</span>
+            <span class="tag">Clear escalation</span>
+          </div>
+        </div>
+        <div class="wireframe v13 fade-up">
+          <div class="v13-layout">
+            <aside class="v13-summary">
+              <span class="tag green">Supplier health</span>
+              <h3>Demo Diamonds</h3>
+              <div class="v13-ring">72%</div>
+              <div class="metric"><span>Failed rows</span><strong>4</strong></div>
+              <div class="metric"><span>Demand SLA</span><strong>2h</strong></div>
+            </aside>
+            <main class="v13-workspace">
+              <div class="v13-toolbar">
+                <div class="input">Search supplier issue</div>
+                <div class="select">Severity</div>
+                <button class="btn green">Resolve selected</button>
+              </div>
+              <div class="table-card">
+                <table>
+                  <thead><tr><th>Issue</th><th>Type</th><th>Impact</th><th>Owner</th><th>Action</th></tr></thead>
+                  <tbody>
+                    <tr><td>Invalid color enum</td><td>Upload row</td><td><span class="status warn">Medium</span></td><td>Supplier</td><td><button class="mini-button">Fix</button></td></tr>
+                    <tr><td>Demand waiting response</td><td>Buyer demand</td><td><span class="status bad">High</span></td><td>Manager</td><td><button class="mini-button">Respond</button></td></tr>
+                    <tr><td>Promotion target ready</td><td>Campaign</td><td><span class="status">Low</span></td><td>Admin</td><td><button class="mini-button">Publish</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </main>
+          </div>
+        </div>
+      </section>
+
+      <section class="variant" id="variant-14">
+        <div class="variant-header">
+          <div>
+            <h2>14. Dark Command Console</h2>
+            <p>Premium dark-mode command center with global search, quick actions, and motion canvas area for executive admin users.</p>
+          </div>
+          <div class="tag-row">
+            <span class="tag">Premium dark</span>
+            <span class="tag gold">Motion heavy</span>
+            <span class="tag">Executive feel</span>
+          </div>
+        </div>
+        <div class="wireframe v14 fade-up">
+          <div class="v14-shell">
+            <div class="v14-command">
+              <div class="input">Command: search, create campaign, retry pushes...</div>
+              <button class="btn gold">Run action</button>
+              <button class="btn secondary">Shortcuts</button>
+            </div>
+            <section class="v14-grid">
+              <div class="v14-card"><h3>Live diamond motion</h3><div class="v14-orbit"></div></div>
+              <div class="v14-card"><h3>Action queue</h3><p style="color:#94a3b8">18 demand requests, 4 failed rows, 2 push failures.</p><button class="btn wine">Start review</button></div>
+              <div class="v14-card"><h3>System health</h3><p style="color:#94a3b8">Backend online, gateway healthy, notification outbox running.</p><button class="btn secondary">Open health</button></div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="variant" id="variant-15">
+        <div class="variant-header">
+          <div>
+            <h2>15. Supplier Feed Kanban</h2>
+            <p>Workflow-board layout for uploads and demand: queued, processing, needs review, live. Great for teams.</p>
+          </div>
+          <div class="tag-row">
+            <span class="tag green">Best workflow</span>
+            <span class="tag">Team friendly</span>
+            <span class="tag">Drag motion ready</span>
+          </div>
+        </div>
+        <div class="wireframe v15 fade-up">
+          <div class="v15-head">
+            <div>
+              <span class="tag gold">Supplier feed board</span>
+              <h3>Upload workflow</h3>
+            </div>
+            <button class="btn gold">New upload</button>
+          </div>
+          <div class="v15-board">
+            <section class="v15-column"><h4>Queued</h4><div class="v15-ticket"><strong>Mumbai Stones CSV</strong><span class="status">Waiting</span><button class="mini-button">Start</button></div></section>
+            <section class="v15-column"><h4>Processing</h4><div class="v15-ticket pulse-line"><strong>Demo inventory</strong><span class="status">84 / 120 rows</span><button class="mini-button">Track</button></div></section>
+            <section class="v15-column"><h4>Needs review</h4><div class="v15-ticket"><strong>4 failed rows</strong><span class="status warn">Invalid fields</span><button class="mini-button">Fix rows</button></div></section>
+            <section class="v15-column"><h4>Live</h4><div class="v15-ticket"><strong>Surat Premium</strong><span class="status good">Published</span><button class="mini-button">View stock</button></div></section>
+          </div>
+        </div>
+      </section>
+
+      <section class="variant" id="variant-16">
+        <div class="variant-header">
+          <div>
+            <h2>16. Minimal Pro White</h2>
+            <p>Very clean, premium, low-noise design. Best if you want luxury through spacing, typography, and restraint.</p>
+          </div>
+          <div class="tag-row">
+            <span class="tag">Cleanest</span>
+            <span class="tag">Very readable</span>
+            <span class="tag gold">Premium minimal</span>
+          </div>
+        </div>
+        <div class="wireframe v16 fade-up">
+          <div class="v16-top">
+            <div>
+              <span class="tag gold">Karigar studio</span>
+              <h3>Quiet control, clear action</h3>
+            </div>
+            <div class="tag-row"><button class="btn secondary">View reports</button><button class="btn">Create</button></div>
+          </div>
+          <div class="v16-grid">
+            <section class="v16-hero-card">
+              <div>
+                <h4>Everything important is one click away.</h4>
+                <p style="max-width: 520px; color: var(--muted); line-height: 1.55">A restrained admin panel for owners and operators who want clarity over decoration.</p>
+              </div>
+              <div class="tag-row">
+                <button class="btn">Open supplier uploads</button>
+                <button class="btn secondary">Review demand</button>
+              </div>
+            </section>
+            <aside class="v16-stack">
+              <div class="v16-stack-card"><span class="icon-box">01</span><div><strong>Supplier upload</strong><br /><span style="color: var(--muted)">4 rows need attention</span></div><span class="status warn">Review</span></div>
+              <div class="v16-stack-card"><span class="icon-box">02</span><div><strong>Campaign draft</strong><br /><span style="color: var(--muted)">Buyer promotion ready</span></div><span class="status">Draft</span></div>
+              <div class="v16-stack-card"><span class="icon-box">03</span><div><strong>Push delivery</strong><br /><span style="color: var(--muted)">182 delivered today</span></div><span class="status good">Healthy</span></div>
+              <div class="v16-stack-card"><span class="icon-box">04</span><div><strong>User access</strong><br /><span style="color: var(--muted)">2 verification pending</span></div><span class="status warn">Pending</span></div>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
