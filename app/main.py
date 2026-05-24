@@ -10,8 +10,10 @@ from app.db.session import engine
 from app.middleware.logging_access import AccessLogMiddleware
 from app.middleware.request_id import RequestIdMiddleware
 from app.modules.auth.router import router as auth_router
+from app.modules.admin.router import router as admin_router
 from app.modules.calculator.router import router as calculator_router
 from app.modules.catalog.router import router as catalog_router
+from app.modules.demand.router import router as demand_router
 from app.modules.health.router import router as health_router
 from app.modules.notifications.router import router as notifications_router
 from app.modules.orders.router import router as orders_router
@@ -50,6 +52,7 @@ register_exception_handlers(app)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
+    allow_origin_regex=settings.cors_origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -60,9 +63,11 @@ app.add_middleware(RequestIdMiddleware)
 # Module routers — registration order doesn't matter; URL prefixes are unique.
 app.include_router(health_router)
 app.include_router(auth_router)
+app.include_router(admin_router)
 app.include_router(calculator_router)
 app.include_router(users_router)
 app.include_router(catalog_router)
+app.include_router(demand_router)
 app.include_router(suppliers_router)
 app.include_router(pricing_router)
 app.include_router(orders_router)

@@ -20,20 +20,26 @@ app/
     ├── pricing/       rapaport + value_scores + price_history
     ├── orders/        orders + items + tracking + inventory_log
     ├── trends/        user_flow_tracking (stone interactions) + trend_signals
+    ├── demand/        buyer demand/discount requests
     └── notifications/ notifications + news_scraping
 
 sql/                   v2 schema (canonical state)
 ├── 01_karigar_schema_v2.sql       — base (23 tables, 19 ENUMs, RLS, pgcrypto)
 ├── 01a_karigar_otp_addendum.sql   — phone_hash, nullable email, otp_records, auth_events
+├── 01b_payments.sql               — payments checkout table
 ├── 02_calculator_tables.sql       — diamond_inventory, metal_rates, pricing_settings
+├── 04_admin_supplier_mappings.sql — supplier access mappings
+├── 05_safe_decrypt_pii.sql        — admin-safe PII decrypt helper
+├── 06_notifications_demand.sql    — push notifications + demand requests
 └── 03_verify_v2.sql               — self-test
 
 alembic/               migrations on top of the SQL baseline
 tests/                 pytest (asyncio mode=auto)
 ```
 
-Active modules: `auth`, `users`, `health`, `calculator`, `catalog`, `orders`, and
-`payments`. The remaining domain routers are scaffolded for incremental build-out.
+Active modules: `auth`, `users`, `health`, `calculator`, `catalog`, `orders`,
+`payments`, `suppliers`, `admin`, `demand`, and `notifications`. `pricing` and
+`trends` still contain scaffolded endpoints for incremental build-out.
 
 ## Run
 
@@ -57,6 +63,78 @@ PGPASSWORD=postgres psql -h localhost -U postgres -d karigar_app -f sql/03_verif
 # 4. Boot the API
 .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
+
+## Run with Docker Compose
+
+Compose runs one Postgres database, one nginx gateway, and one container per
+service under `services/*`.
+
+The service images are built through one shared Dockerfile:
+
+```text
+docker/service.Dockerfile
+```
+
+Each Compose service passes two build arguments into that Dockerfile:
+`SERVICE_NAME` selects the source folder under `services/`, and `SERVICE_PORT`
+sets both the container port and the Uvicorn runtime port. This keeps auth,
+catalog, suppliers, admin, demand, orders, payments, pricing, trends,
+notifications, users, and calculator on the same base image and build pattern
+without hand-copying Dockerfile changes across every service.
+
+The build context is the repository root so every service can install the
+shared package from `shared/` first, then install its own
+`services/<name>/requirements.txt`, then copy only that service code. Containers
+run as a non-root `app` user after dependencies are installed.
+
+```bash
+# 1. Create local env if needed
+cp .env.example .env
+
+# 2. Build and start all services
+docker compose build
+docker compose up
+
+# 3. Inspect health/logs from another terminal
+docker compose ps
+docker compose logs auth
+```
+
+The gateway is available at `http://localhost/health`. Individual service
+ports are also exposed, for example auth on `http://localhost:8001/health`.
+
+On a fresh `pgdata` volume, Postgres automatically applies the SQL-owned schema
+in this order:
+
+```text
+sql/01_karigar_schema_v2.sql
+sql/01a_karigar_otp_addendum.sql
+sql/01b_payments.sql
+sql/02_calculator_tables.sql
+sql/04_admin_supplier_mappings.sql
+sql/05_safe_decrypt_pii.sql
+sql/06_notifications_demand.sql
+sql/seed_dev.sql
+docker/db/08_stamp_alembic.sql
+```
+
+Those init scripts run only when the `pgdata` volume is first created. To reset
+the local Docker database and replay them:
+
+```bash
+docker compose down -v
+docker compose up
+```
+
+Run the existing pytest suite inside Docker with:
+
+```bash
+docker compose run --rm test
+```
+
+The Docker test runner reapplies `sql/seed_dev.sql` before pytest so the
+order/catalog tests have their expected dev stones even when the DB volume
+already exists.
 
 ## Data imports
 
@@ -173,8 +251,8 @@ Switch providers by editing the single instantiation in `app/modules/auth/router
   isn't implemented.
 - **Monthly cron** — `price_history` is partitioned monthly through 2026-08 with a
   default catch-all. Add pg_cron / app-level scheduler to create future partitions.
-- **Domain endpoints** — `catalog`, `suppliers`, `pricing`, `orders`, `trends`,
-  `notifications` ship with 501 stubs; flesh out per-feature.
+- **Domain endpoints** — `pricing` and `trends` still include
+  scaffolded `501` responses; flesh out per-feature before production use.
 - **Supplier-self-read RLS** — v2 schema has buyer-side RLS only; suppliers viewing
   their own listings is a future addition.
 - **Real SMS provider** — wire Twilio/MSG91 into `providers/`.

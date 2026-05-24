@@ -1,0 +1,79 @@
+name: Backend Quality
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: karigar_app
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d karigar_app"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/karigar_app
+      CORS_ORIGINS: '["http://localhost:5174","http://localhost:8081"]'
+      JWT_SECRET: ci-jwt-secret-change-me
+      JWT_ISSUER: karigar
+      JWT_TOKEN_TTL_DAYS: "30"
+      OTP_EXPIRY_SECONDS: "300"
+      OTP_MAX_ATTEMPTS: "3"
+      OTP_CODE_LENGTH: "6"
+      PII_ENCRYPTION_KEY: ci-pii-key-change-me
+      PHONE_HASH_PEPPER: ci-phone-pepper-change-me
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip install ./shared
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Apply SQL baseline
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d karigar_app -v ON_ERROR_STOP=1 -f sql/01_karigar_schema_v2.sql
+          PGPASSWORD=postgres psql -h localhost -U postgres -d karigar_app -v ON_ERROR_STOP=1 -f sql/01a_karigar_otp_addendum.sql
+          PGPASSWORD=postgres psql -h localhost -U postgres -d karigar_app -v ON_ERROR_STOP=1 -f sql/01b_payments.sql
+          PGPASSWORD=postgres psql -h localhost -U postgres -d karigar_app -v ON_ERROR_STOP=1 -f sql/02_calculator_tables.sql
+          alembic stamp 0003
+          alembic upgrade head
+
+      - name: Seed deterministic catalog data
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d karigar_app -v ON_ERROR_STOP=1 -f sql/seed_dev.sql
+
+      - name: Run backend tests
+        run: pytest -q
+
+      - name: Compile backend and services
+        run: python -m compileall app shared services
+
+      - name: Run optional pricing service tests
+        working-directory: services/pricing
+        run: PYTHONPATH=. python -m pytest -q tests

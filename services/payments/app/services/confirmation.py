@@ -10,6 +10,7 @@ import uuid
 from typing import Any
 
 from fastapi import HTTPException, status
+from karigar_shared.notifications import notify_order_transaction
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import text
 
@@ -129,6 +130,13 @@ async def confirm(
             ),
             {"s": str(stone_id), "u": str(user_id), "p": payment["amount_inr"]},
         )
+
+    await notify_order_transaction(
+        session,
+        order_id=payment["order_id"],
+        buyer_id=user_id,
+        order_status=new_order_status,
+    )
 
     return {
         "payment_id": payment_id,

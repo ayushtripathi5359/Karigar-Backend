@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-from openpyxl import load_workbook
+import pytest
 
 from app.pricing_engine import DEFAULT_WORKBOOK_PATH, KarigarPricingEngine
 
@@ -30,13 +30,16 @@ def _workbook_path() -> Path:
 
 def test_master_batch_sieve_values_roundtrip_through_normalizers() -> None:
     """
-    Loads the real workbook and prints raw + normalized values so we can inspect
-    exactly what openpyxl returns before and after normalization.
+    Optional workbook integration check.
+
+    The pricing workbook is not committed to the repo, so CI/local automation
+    should skip this test unless KARIGAR_PRICING_WORKBOOK_PATH points at it.
     """
     workbook_path = _workbook_path()
-    assert workbook_path.exists(), (
-        f"Workbook not found at '{workbook_path}'. Set KARIGAR_PRICING_WORKBOOK_PATH."
-    )
+    if not workbook_path.exists():
+        pytest.skip(f"Workbook not found at '{workbook_path}'. Set KARIGAR_PRICING_WORKBOOK_PATH.")
+
+    from openpyxl import load_workbook
 
     wb_raw = load_workbook(filename=str(workbook_path), data_only=False)
     ws_master_raw = wb_raw["Master"]

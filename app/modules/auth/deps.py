@@ -78,3 +78,43 @@ async def current_user(
             raise HTTPException(status.HTTP_401_UNAUTHORIZED, "user not found")
 
         yield CurrentUser(user_id=user_id, role=role, session=session)
+
+
+def require_roles(*roles: str):
+    allowed = set(roles)
+
+    async def dependency(
+        me: Annotated[CurrentUser, Depends(current_user)],
+    ) -> CurrentUser:
+        if me.role not in allowed:
+            raise HTTPException(status.HTTP_403_FORBIDDEN, "insufficient role")
+        return me
+
+    return dependency
+
+
+async def user_can_access_supplier(me: CurrentUser, supplier_id: uuid.UUID) -> bool:
+    if me.role in {"admin", "karigar_staff"}:
+        return True
+    if me.role != "supplier":
+        return False
+    exists = (
+        await me.session.execute(
+            text(
+                """
+                SELECT 1
+                FROM supplier_user_mappings
+                WHERE user_id = :user_id
+                  AND supplier_id = :supplier_id
+                  AND deleted_at IS NULL
+                """
+            ),
+            {"user_id": str(me.user_id), "supplier_id": str(supplier_id)},
+        )
+    ).scalar_one_or_none()
+    return exists is not None
+
+
+async def require_supplier_access(me: CurrentUser, supplier_id: uuid.UUID) -> None:
+    if not await user_can_access_supplier(me, supplier_id):
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "supplier access denied")
